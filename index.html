@@ -1,0 +1,2009 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Clínica Moguz — Demo Frontend</title>
+  <meta name="description" content="Front-end demo para la Clínica Moguz: turnos, tratamientos, profesionales y chatbot (HTML/CSS/JS)." />
+  <style>
+    /* ---------- Reset & base ---------- */
+    :root{
+      /* NUEVA PALETA: Clínica Luminosa (Blanco, Gris Frío, Celeste Pastel) */
+      --bg:#f8f9fa; /* Blanco roto/gris muy claro para fondo */
+      --card:#ffffff; /* Blanco puro para tarjetas y modales */
+      --text:#212529; /* Gris oscuro para el texto */
+      --muted:#adb5bd; /* Gris medio/frío para texto secundario */
+      --accent:rgba(129, 212, 250, 0.5); /* ⭐️ Celeste Pastel Brillante (El color del globo) - Más transparente */
+      --accent-600:rgba(41, 182, 246, 0.6); /* ⭐️ Tono de acento más oscuro/saturado para hover/títulos - Más transparente */
+      --glass: rgba(255,255,255,0.9); /* Transparencia muy alta para efecto "blanco nebuloso" */
+      
+      /* Variables de radio */
+      --radius-lg: 16px; 
+      --radius-md: 10px;
+      
+      /* Variables para Luminosidad */
+      --shadow-color: rgba(0,0,0,0.05); 
+      --border-color: rgba(0,0,0,0.1); 
+    }
+    
+    /* MODIFICACIÓN CLAVE: Modo Oscuro Adaptado a la Estética Clínica */
+    [data-theme="dark"]{ 
+      --bg:#121a24; /* Fondo azul oscuro/gris oscuro */
+      --card:#1c2733; /* Tarjetas ligeramente más claras para contraste */
+      --text:#e3eaf1; /* Texto blanco brillante */
+      --muted:#95a4b8; /* Gris azulado suave */
+      --accent:rgba(129, 212, 250, 0.5); /* ⭐️ Mantiene el celeste claro para visibilidad en oscuro - Más transparente */
+      --accent-600:rgba(41, 182, 246, 0.6); /* Base de acento del modo claro - Más transparente */
+      --glass: rgba(255,255,255,0.08); /* Transparencia para blur oscuro */
+      --shadow-color: rgba(0,0,0,0.5); /* Sombra intensa en Dark Mode */
+      --border-color: rgba(255,255,255,0.1); /* Color de borde sutil */
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+      color:var(--text);
+      /* Fondo dinámico: utiliza un color simple y deja que --bg se encargue */
+      background:var(--bg);
+      transition: background-color 0.3s;
+    }
+    body[data-theme="light"] {
+        /* Degradado luminoso sutil */
+        background:linear-gradient(180deg,var(--bg),#e6eef8); 
+    }
+
+    /* Tipografía Estética */
+    h1, h2, h3 {
+      /* Fuente más moderna y limpia */
+      font-family: 'Helvetica Neue', Arial, sans-serif; 
+      font-weight: 700;
+      letter-spacing: -0.01em; 
+      color: var(--accent-600); 
+    }
+
+    .container{max-width:1100px;margin:0 auto;padding:20px}
+    
+    /* Header: Ajuste para Dark Mode */
+    header{
+      position:fixed;left:0;right:0;top:0;z-index:40;
+      background:var(--card);
+      backdrop-filter:blur(10px); /* Aumenta el blur para efecto "glass" */
+      /* Borde dinámico */
+      border-bottom:1px solid var(--border-color); /* Usa la variable de borde para ambos modos */
+      transition: background-color 0.3s, border-color 0.3s;
+      padding-left: 70px; /* Espacio para el botón del menú */
+    }
+    /* Asegurar que el header no bloquee el botón del menú */
+    header::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 70px;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px}
+    
+    /* Estilos mejorados para el selector de idioma */
+    #lang-select {
+      padding: 8px 32px 8px 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      background: var(--card);
+      color: var(--text);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236c757d' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      min-width: 60px;
+    }
+    [data-theme="dark"] #lang-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2395a4b8' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    }
+    #lang-select:hover {
+      border-color: var(--accent);
+      background-color: var(--glass);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px var(--shadow-color);
+    }
+    #lang-select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(129, 212, 250, 0.25); /* Usa el nuevo color acento */
+    }
+    
+    /* Estilos mejorados para el botón de modo oscuro */
+    #toggle-theme {
+      width: 40px !important;
+      height: 40px !important;
+      min-width: 40px !important;
+      min-height: 40px !important;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      background: var(--card);
+      color: var(--text);
+      font-size: 16px !important;
+      cursor: pointer;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      transition: all 0.2s ease;
+      padding: 0 !important;
+      margin: 0 !important;
+      line-height: 1 !important;
+      vertical-align: middle !important;
+      text-align: center !important;
+      position: relative !important;
+    }
+    #toggle-theme span {
+      display: inline-block !important;
+      line-height: 1 !important;
+      position: absolute !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    #toggle-theme:hover {
+      background: var(--accent);
+      color: var(--text); /* Mantiene el texto oscuro en hover para un contraste suave */
+      border-color: var(--accent);
+      transform: translateY(-1px) scale(1.05);
+      box-shadow: 0 4px 12px rgba(129, 212, 250, 0.3); /* Usa el nuevo color acento */
+    }
+    [data-theme="dark"] #toggle-theme:hover {
+        color: white; /* Vuelve a blanco en dark mode */
+    }
+    #toggle-theme:active {
+      transform: translateY(0) scale(0.98);
+    }
+    
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
+    .brand .logo{
+      width:44px;height:44px;
+      border-radius:var(--radius-md); 
+      /* Logo utiliza el color clínico */
+      background:linear-gradient(135deg,var(--accent),var(--accent-600)); 
+      display:flex;align-items:center;justify-content:center;color:var(--text); /* Color de texto oscuro para el logo */
+      font-weight:700
+    }
+    [data-theme="dark"] .brand .logo {
+        color: white; /* Logo blanco en dark mode */
+    }
+    nav a{margin:0 8px;text-decoration:none;color:var(--muted);font-weight:600;transition:color 0.2s}
+    nav a:hover{color:var(--accent)} 
+    .nav-actions{display:flex;align-items:center;gap:8px}
+    button{cursor:pointer}
+
+    main{padding-top:20px} 
+
+    /* ---------- Hero: Ajuste de sombras ---------- */
+    .hero{
+      margin-top: 150px; 
+      display:grid;grid-template-columns:1fr;gap:18px;align-items:center;padding:32px;
+      border-radius:var(--radius-lg); 
+      /* Fondo blanco y puro */
+      background: var(--card); 
+      box-shadow:0 8px 24px var(--shadow-color); 
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    [data-theme="dark"] .hero {
+      background: var(--card);
+    }
+    .hero .content{max-width:640px}
+    /* El título del hero vuelve al color de texto principal para un look más limpio */
+    .hero h1{font-size:32px;margin:0 0 10px;color:var(--text)} 
+    .hero p{margin:0;color:var(--muted)}
+    .hero .cta{margin-top:20px;display:flex;gap:12px} 
+    
+    /* Estilo de Botones Premium */
+    .btn{
+      padding:12px 18px; 
+      border-radius:999px; 
+      border:0;
+      font-weight:700;
+      transition: all 0.2s ease-in-out; 
+    }
+    .btn-primary{background:var(--accent);color:var(--text)} /* Usa color de texto oscuro en el botón claro para accesibilidad */
+    [data-theme="dark"] .btn-primary {
+        color: white; /* Vuelve a blanco en dark mode */
+    }
+    .btn-primary:hover{
+      background:var(--accent-600); 
+      transform: translateY(-1px); 
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      color: white; /* Texto blanco en hover para contraste sobre el azul más oscuro */
+    }
+    .btn-ghost{background:transparent;border:1px solid var(--muted);color:var(--text)}
+    .btn-ghost:hover{
+      border-color:var(--accent);
+      color:var(--accent);
+    }
+    
+    /* Input/Select/Textarea: Ajuste de bordes en Dark Mode */
+    input,textarea{
+      width:100%;padding:12px;border-radius:var(--radius-md);
+      border:1px solid var(--border-color);
+      background:var(--card); /* Inputs con fondo blanco/card para mayor contraste y limpieza */
+      transition:border-color 0.2s, background-color 0.2s;
+      color: var(--text);
+    }
+    /* Select general (excluyendo #lang-select que tiene estilos propios) */
+    select:not(#lang-select) {
+      width:100%;padding:12px;border-radius:var(--radius-md);
+      border:1px solid var(--border-color);
+      background:var(--card); /* Selects con fondo blanco/card */
+      transition:border-color 0.2s, background-color 0.2s;
+      color: var(--text);
+    }
+    input:focus,select:focus,textarea:focus{border-color:var(--accent); box-shadow: 0 0 0 1px var(--accent);}
+
+    /* Imagen del Hero más suave */
+    .hero .media{
+      height:220px;
+      border-radius:var(--radius-lg);
+      overflow:hidden;
+      box-shadow: 0 10px 30px var(--shadow-color);
+    }
+
+    /* ---------- Cards grid: Ajuste de sombras ---------- */
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:24px} 
+    .card{
+      background:var(--card);
+      border-radius:var(--radius-md);padding:18px;
+      box-shadow:0 6px 18px var(--shadow-color);
+      transition:transform 0.2s, background-color 0.3s, box-shadow 0.3s;
+    }
+    .card:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(0,0,0,0.1);}
+    [data-theme="dark"] .card:hover{box-shadow:0 10px 20px var(--shadow-color);}
+    .card h3{margin:0 0 8px}
+    .treatment-card img{width:100%;height:150px;object-fit:cover;border-radius:var(--radius-md)}
+
+    /* ---------- Turnos modal: Fondo y bordes ---------- */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.45);display:flex;align-items:center;justify-content:center;z-index:60;backdrop-filter:blur(4px)}
+    .modal{width:100%;max-width:760px;background:var(--card);padding:24px;border-radius:var(--radius-lg);box-shadow:0 12px 40px var(--shadow-color)}
+    [data-theme="dark"] .modal {
+      box-shadow:0 12px 40px rgba(0,0,0,0.8);
+    }
+    
+    /* ---------- Modales personalizados para Alert y Confirm ---------- */
+    .custom-alert-modal, .custom-confirm-modal {
+      max-width: 420px;
+      padding: 28px;
+    }
+    .custom-alert-icon, .custom-confirm-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin: 0 auto 20px;
+      /* Icono utiliza el gradiente de acento clínico */
+      background: linear-gradient(135deg, var(--accent), var(--accent-600));
+      color: var(--text); /* Color de texto oscuro para el icono */
+    }
+    [data-theme="dark"] .custom-alert-icon, 
+    [data-theme="dark"] .custom-confirm-icon {
+        color: white; /* Color de texto claro en modo oscuro */
+    }
+    .custom-alert-title, .custom-confirm-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .custom-alert-message, .custom-confirm-message {
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      font-size: 15px;
+    }
+    .custom-alert-actions, .custom-confirm-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .custom-alert-actions button, .custom-confirm-actions button {
+      min-width: 100px;
+      padding: 12px 24px;
+    } 
+
+    /* ---------- Chatbot bubble ---------- */
+    .chat-bubble{position:fixed;right:18px;bottom:18px;width:64px;height:64px;border-radius:999px;background:linear-gradient(135deg,#29b6f6,#0288d1);
+      display:flex;align-items:center;justify-content:center;color:white;box-shadow:0 8px 30px rgba(0,0,0,0.3);cursor:pointer;z-index:80;font-size:28px}
+    .chat-bubble:hover{transform:scale(1.1);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
+    .chat-window{position:fixed;right:18px;bottom:94px;width:380px;background:linear-gradient(135deg,#e3f2fd,#bbdefb);border-radius:var(--radius-lg);padding:20px;box-shadow:0 12px 40px rgba(0,0,0,0.25);z-index:80;border:2px solid #90caf9}
+    [data-theme="dark"] .chat-window {
+      background:linear-gradient(135deg,#1565c0,#0d47a1);
+      border-color:#1976d2;
+    }
+    .chat-window header{display:flex;align-items:center;justify-content:space-between}
+    .quick-buttons{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+    .quick-buttons button{padding:8px 12px;border-radius:var(--radius-md);border:1px solid #64b5f6;background:white;color:#1976d2;font-size:13px;font-weight:600;flex:1;min-width:calc(50% - 4px)}
+    .quick-buttons button:hover{background:#1976d2;color:white;transform:translateY(-1px)}
+    .chat-log{max-height:300px;overflow:auto;margin:12px 0;padding:12px;border-radius:var(--radius-md);background:white;border:1px solid #90caf9}
+    [data-theme="dark"] .chat-log{background:#0d47a1;border-color:#1976d2}
+    .msg{margin:8px 0;padding:10px 12px;border-radius:12px;display:flex;align-items:start;gap:10px;max-width:90%;clear:both}
+    .msg.user{background:#1976d2;color:white;margin-left:auto;flex-direction:row-reverse;border-bottom-right-radius:4px}
+    .msg.bot{background:#f5f5f5;color:#1f2937;float:left;border-bottom-left-radius:4px}
+    [data-theme="dark"] .msg.bot{background:#1e3a5f;color:#e3eaf1}
+    .msg.bot::before{content:'🤖';font-size:20px;flex-shrink:0}
+
+    /* ---------- Turn table ---------- */
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid var(--border-color);text-align:left}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:700;font-size:12px} 
+    
+    /* Pilas en modo claro (colores suaves) */
+    .pill.pending{background:#fff3cd;color:#7d6a00}
+    .pill.confirmed{background:#d4edda;color:#155724}
+    .pill.cancel{background:#f8d7da;color:#721c24}
+    
+    /* Pilas en modo oscuro (colores brillantes/oscuros) */
+    [data-theme="dark"] .pill.pending{background:#856404;color:#ffeeba}
+    [data-theme="dark"] .pill.confirmed{background:#155724;color:#d4edda}
+    [data-theme="dark"] .pill.cancel{background:#721c24;color:#f8d7da}
+
+    /* ---------- Footer ---------- */
+    footer{
+      margin-top:40px;padding:30px 24px;
+      border-top:1px solid var(--border-color);
+      color:var(--muted);
+    }
+
+    /* ---------- Menú desplegable ---------- */
+    .menu-toggle {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 9999 !important; 
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: var(--card);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 12px var(--shadow-color);
+      transition: all 0.3s ease;
+      pointer-events: auto !important;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .menu-toggle:hover {
+      background: rgba(41, 182, 246, 0.8);
+      color: white;
+      transform: scale(1.05);
+    }
+    [data-theme="dark"] .menu-toggle:hover {
+        color: white;
+    }
+    .menu-toggle span {
+      font-size: 24px;
+      line-height: 1;
+      pointer-events: none;
+    }
+    
+    .dropdown-menu {
+      position: fixed !important;
+      top: 70px !important;
+      left: 12px !important;
+      z-index: 9998 !important; 
+      background: #ffffff !important;
+      border-radius: var(--radius-lg) !important;
+      padding: 12px 0 !important;
+      min-width: 220px !important;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3) !important;
+      border: 2px solid rgba(0,0,0,0.1) !important;
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+    [data-theme="dark"] .dropdown-menu {
+      background: #1c2733 !important;
+      border-color: rgba(255,255,255,0.2) !important;
+    }
+    .dropdown-menu.active {
+      display: block !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+    .dropdown-menu a {
+      display: block;
+      padding: 12px 20px;
+      color: var(--text);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border-left: 3px solid transparent;
+    }
+    .dropdown-menu a:hover {
+      background: var(--glass);
+      border-left-color: var(--accent);
+      color: var(--accent);
+      padding-left: 24px;
+    }
+    .dropdown-menu a:active {
+      transform: scale(0.98);
+    }
+
+    /* ---------- Modal de login mejorado ---------- */
+    .login-modal {
+      max-width: 450px;
+      padding: 32px;
+    }
+    .login-modal h3 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .login-modal .subtitle {
+      text-align: center;
+      color: var(--muted);
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+    .login-form-group {
+      margin-bottom: 20px;
+    }
+    .login-form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text);
+      font-size: 14px;
+    }
+    .login-form-group input {
+      padding: 14px 16px;
+      font-size: 16px;
+    }
+    .login-divider {
+      display: flex;
+      align-items: center;
+      margin: 24px 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .login-divider::before,
+    .login-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-color);
+    }
+    .login-divider span {
+      padding: 0 12px;
+    }
+    .login-social {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .login-social button {
+      flex: 1;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      background: var(--card);
+      color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .login-social button:hover {
+      background: var(--glass);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    /* Responsive tweaks */
+    @media(min-width:800px){
+      .hero{grid-template-columns:1fr 360px}
+      .hero .media{height:220px;border-radius:var(--radius-lg);overflow:hidden}
+    }
+  </style>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <style>
+    /* Override para el menú */
+    .dropdown-menu {
+      display: none !important;
+    }
+    .dropdown-menu[style*="display: block"] {
+      display: block !important;
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <button class="menu-toggle" id="menu-toggle" aria-label="Menú de navegación" style="position:fixed;top:12px;left:12px;z-index:99999;pointer-events:auto;cursor:pointer;">
+    <span>☰</span>
+  </button>
+  <div class="dropdown-menu" id="dropdown-menu" style="position:fixed;top:70px;left:12px;background:white;border:2px solid rgba(0,0,0,0.1);border-radius:16px;padding:12px 0;min-width:220px;box-shadow:0 8px 24px rgba(0,0,0,0.3);z-index:9998;display:none;">
+    <a href="index.html" style="display:block;padding:12px 20px;color:inherit;text-decoration:none;">📊 Dashboard</a>
+    <a href="tratamientos.html" style="display:block;padding:12px 20px;color:inherit;text-decoration:none;">💉 Tratamientos</a>
+    <a href="profesionales.html" style="display:block;padding:12px 20px;color:inherit;text-decoration:none;">👨‍⚕️ Profesionales</a>
+    <a href="turnos.html" style="display:block;padding:12px 20px;color:inherit;text-decoration:none;">📅 Turnos</a>
+    <a href="contacto.html" style="display:block;padding:12px 20px;color:inherit;text-decoration:none;">📞 Contacto</a>
+  </div>
+
+  <header>
+    <div class="nav-inner container">
+      <a href="#" class="brand" id="brand-link">
+       <div class="logo-icon">
+    <img src="https://cdn-icons-png.flaticon.com/512/3873/3873441.png" 
+         style="width:28px;height:28px;">
+</div>
+
+
+        <div>
+          <div style="font-weight:800">Clínica Moguz</div>
+          <div style="font-size:12px;color:var(--muted)">Cirugía plástica • Reconstructiva • Estética</div>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <select id="lang-select" aria-label="Seleccionar idioma">
+          <option value="es">ES</option>
+          <option value="en">EN</option>
+        </select>
+        <button id="toggle-theme" title="Modo oscuro"><span>🌓</span></button>
+        <button id="open-turn" class="btn btn-primary">Solicitar turno</button>
+        <button id="login-btn" class="btn btn-ghost" onclick="openLoginModal()">Iniciar sesión</button>
+        <span id="user-status" style="margin-left:10px;color:var(--muted);"></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" id="home">
+    <section class="hero" role="region" aria-labelledby="hero-title">
+      <div class="content">
+        <h1 id="hero-title">Clínica Moguz — Excelencia en cirugía plástica y estética</h1>
+        <p id="hero-subtitle">Atención personalizada, equipo profesional y tecnología de vanguardia. Pedí tu turno presencial o virtual con unos pocos pasos.</p>
+        <div class="cta">
+          <button class="btn btn-primary" id="hero-request">Solicitar turno ahora</button>
+          <button class="btn btn-ghost" id="hero-treat">Conocé nuestros tratamientos</button>
+        </div>
+
+        <div style="margin-top:30px"> 
+          <h3 id="next-turns-title">Próximos turnos</h3>
+          <div id="next-turns"></div>
+        </div>
+      </div>
+
+      <div class="media" aria-hidden="true">
+        <img src="https://static.vecteezy.com/ti/fotos-gratis/t2/45677420-laser-tratamento-cosmetico-salao-interior-foto.jpg" alt="Recepción clínica" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-lg)"/>
+      </div>
+    </section>
+
+    <section id="turnos" style="margin-top:30px"> 
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h2 id="turns-title">Turnos</h2>
+        <div>
+          <button class="btn btn-ghost" id="my-turns-btn">Mis turnos</button> 
+          <button class="btn btn-ghost" id="history-btn">Historial</button> 
+        </div>
+      </div>
+
+      <div style="margin-top:16px" id="turns-table-area">
+        </div>
+    </section>
+
+    <section id="tratamientos" style="margin-top:40px"> 
+      <h2 id="treatments-title">Tratamientos y Servicios</h2>
+      <div style="margin:12px 0;display:flex;gap:12px"> 
+        <input id="t-search" placeholder="Buscar por nombre o especialidad" aria-label="Buscar tratamientos" style="flex:1" /> 
+        <button id="t-search-btn" class="btn btn-primary">Buscar</button> 
+      </div>
+
+      <div class="grid" id="treatments-grid" aria-live="polite"></div>
+    </section>
+
+    <section id="profesionales" style="margin-top:40px"> 
+      <h2 id="professionals-title">Profesionales</h2>
+      <div class="grid" id="professionals-grid"></div>
+    </section>
+
+    <section id="contacto" style="margin-top:40px"> 
+      <h2 id="contact-title">Contacto</h2>
+      <div class="card" style="display:flex;gap:20px;align-items:center"> 
+        <div style="flex:1">
+          <p><span data-i18n="address">Dirección:</span> España 1115, Corrientes</p>
+          <p><span data-i18n="phone">Tel:</span> (+54) 9 11 5754-2448 • Instagram: moguz6040</p>
+          <p><span data-i18n="hours">Horarios:</span> <span data-i18n="hoursValue">Lun-mier 8:00 - 20:00</span></p>
+        </div>
+        <div style="width:320px"> 
+          <form id="contact-form">
+            <input name="name" id="contact-name" data-i18n="namePlaceholder" placeholder="Nombre" required style="margin-bottom:8px" />
+            <input name="email" id="contact-email" data-i18n="emailPlaceholder" placeholder="Email" required style="margin-bottom:8px" />
+            <textarea name="msg" id="contact-msg" data-i18n="messagePlaceholder" rows="3" placeholder="Consulta" required style="width:100%;padding:12px;border-radius:var(--radius-md)"></textarea> 
+            <div style="text-align:right;margin-top:10px">
+              <button class="btn btn-primary" type="submit" id="contact-submit" data-i18n="sendQuery">Enviar consulta</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div style="display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap"> 
+        <div>
+          <strong>Clínica Moguz</strong>
+          <div style="color:var(--muted);font-size:13px;margin-top:6px"><span data-i18n="addressLabel">Dirección</span> • <span data-i18n="phoneLabel">Teléfono</span> • <span data-i18n="emailLabel">Email</span></div>
+        </div>
+        <div style="color:var(--muted)"><span data-i18n="quickLinksLabel">Enlaces rápidos:</span> <span data-i18n="turnsLink">Turnos</span> • <span data-i18n="treatmentsLink">Tratamientos</span> • <span data-i18n="contactLink">Contacto</span> • <a href="doctor-login.html" style="color:var(--muted);text-decoration:none;opacity:0.6" title="Acceso Médicos">👨‍⚕️</a></div>
+        <div style="color:var(--muted)"><span data-i18n="policiesLabel">Políticas:</span> <span data-i18n="privacy">Privacidad</span> • <span data-i18n="terms">T&C</span></div>
+      </div>
+    </footer>
+
+  </main>
+
+  <div id="modal-root" aria-live="polite"></div>
+
+  <div id="login-modal-root"></div>
+
+  <div id="chat-root"></div>
+  
+  <div id="alert-modal-root"></div>
+  <div id="confirm-modal-root"></div>
+
+  <script>
+    // MENÚ - Código que funciona correctamente
+    (function() {
+        const menuToggle = document.getElementById('menu-toggle');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+        
+        if (menuToggle && dropdownMenu) {
+            menuToggle.onclick = function() {
+                if (dropdownMenu.style.display === 'block') {
+                    dropdownMenu.style.display = 'none';
+                } else {
+                    dropdownMenu.style.display = 'block';
+                }
+            };
+            
+            // Cerrar menú al hacer clic fuera
+            document.onclick = function(e) {
+                if (!menuToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    dropdownMenu.style.display = 'none';
+                }
+            };
+        }
+    })();
+
+    // Funciones de utilidad movidas para asegurar la disponibilidad global
+    window.toggleMenuManual = function() {
+        console.log('toggleMenuManual llamado');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+        if (dropdownMenu) {
+            const wasActive = dropdownMenu.classList.contains('active');
+            dropdownMenu.classList.toggle('active');
+            const isActive = dropdownMenu.classList.contains('active');
+            console.log('Menú toggled:', wasActive, '->', isActive);
+        } else {
+            console.error('dropdown-menu no encontrado');
+        }
+    };
+    
+    window.closeMenu = function(hash, event) {
+        if (event) {
+            event.preventDefault();
+        }
+        const dropdownMenu = document.getElementById('dropdown-menu');
+        if (dropdownMenu) {
+            dropdownMenu.classList.remove('active');
+        }
+        if (hash) {
+            setTimeout(() => {
+                const element = document.querySelector(hash);
+                if (element) {
+                    const headerOffset = 80;
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                    history.pushState(null, null, hash);
+                }
+            }, 150);
+        }
+    };
+
+    /* ---------- Sistema de Alertas y Confirmaciones personalizadas ---------- */
+    const alertModalRoot = document.getElementById('alert-modal-root');
+    const confirmModalRoot = document.getElementById('confirm-modal-root');
+    
+    // Variables temporales para el idioma (se actualizarán después)
+    let tempCurrentLang = 'es';
+    
+    function customAlert(message, title = null) {
+      return new Promise((resolve) => {
+        const lang = typeof currentLang !== 'undefined' ? currentLang : tempCurrentLang;
+        const alertTitle = title || (lang === 'es' ? 'Información' : 'Information');
+        const okText = lang === 'es' ? 'Aceptar' : 'OK';
+        alertModalRoot.innerHTML = `
+          <div class="modal-backdrop" role="dialog" aria-modal="true" id="alert-backdrop">
+            <div class="modal custom-alert-modal">
+              <div class="custom-alert-icon">ℹ️</div>
+              <div class="custom-alert-title">${alertTitle}</div>
+              <div class="custom-alert-message">${message}</div>
+              <div class="custom-alert-actions">
+                <button class="btn btn-primary" id="alert-ok-btn">${okText}</button>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        const backdrop = document.getElementById('alert-backdrop');
+        const okBtn = document.getElementById('alert-ok-btn');
+        
+        const closeAlert = () => {
+          alertModalRoot.innerHTML = '';
+          resolve();
+        };
+        
+        okBtn.addEventListener('click', closeAlert);
+        backdrop.addEventListener('click', (e) => {
+          if (e.target === backdrop) closeAlert();
+        });
+        
+        // Cerrar con Escape
+        const escapeHandler = (e) => {
+          if (e.key === 'Escape') {
+            closeAlert();
+            document.removeEventListener('keydown', escapeHandler);
+          }
+        };
+        document.addEventListener('keydown', escapeHandler);
+      });
+    }
+    
+    function customConfirm(message, title = null) {
+      return new Promise((resolve) => {
+        const lang = typeof currentLang !== 'undefined' ? currentLang : tempCurrentLang;
+        const confirmTitle = title || (lang === 'es' ? 'Confirmar' : 'Confirm');
+        const acceptText = lang === 'es' ? 'Aceptar' : 'Accept';
+        const cancelText = lang === 'es' ? 'Cancelar' : 'Cancel';
+        confirmModalRoot.innerHTML = `
+          <div class="modal-backdrop" role="dialog" aria-modal="true" id="confirm-backdrop">
+            <div class="modal custom-confirm-modal">
+              <div class="custom-confirm-icon">❓</div>
+              <div class="custom-confirm-title">${confirmTitle}</div>
+              <div class="custom-confirm-message">${message}</div>
+              <div class="custom-confirm-actions">
+                <button class="btn btn-ghost" id="confirm-cancel-btn">${cancelText}</button>
+                <button class="btn btn-primary" id="confirm-ok-btn">${acceptText}</button>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        const backdrop = document.getElementById('confirm-backdrop');
+        const okBtn = document.getElementById('confirm-ok-btn');
+        const cancelBtn = document.getElementById('confirm-cancel-btn');
+        
+        const closeConfirm = (result) => {
+          confirmModalRoot.innerHTML = '';
+          resolve(result);
+        };
+        
+        okBtn.addEventListener('click', () => closeConfirm(true));
+        cancelBtn.addEventListener('click', () => closeConfirm(false));
+        backdrop.addEventListener('click', (e) => {
+          if (e.target === backdrop) closeConfirm(false);
+        });
+        
+        // Cerrar con Escape
+        const escapeHandler = (e) => {
+          if (e.key === 'Escape') {
+            closeConfirm(false);
+            document.removeEventListener('keydown', escapeHandler);
+          }
+        };
+        document.addEventListener('keydown', escapeHandler);
+      });
+    }
+    
+    // Reemplazar alert y confirm globalmente y hacer disponibles las funciones
+    window.alert = customAlert;
+    window.confirm = customConfirm;
+    window.customAlert = customAlert;
+    window.customConfirm = customConfirm;
+
+    /* ---------- Sistema de traducción ---------- */
+    const translations = {
+      es: {
+        // Menú
+        menuHome: 'Inicio',
+        menuTreatments: 'Tratamientos',
+        menuProfessionals: 'Profesionales',
+        menuTurns: 'Turnos',
+        menuContact: 'Contacto',
+        // Header
+        brandSubtitle: 'Cirugía plástica • Reconstructiva • Estética',
+        requestTurn: 'Solicitar turno',
+        login: 'Iniciar sesión',
+        // Hero
+        heroTitle: 'Clínica Moguz — Excelencia en cirugía plástica y estética',
+        heroSubtitle: 'Atención personalizada, equipo profesional y tecnología de vanguardia. Pedí tu turno presencial o virtual con unos pocos pasos.',
+        heroRequest: 'Solicitar turno ahora',
+        heroTreatments: 'Conocé nuestros tratamientos',
+        nextTurns: 'Próximos turnos',
+        noNextTurns: 'No hay turnos próximos',
+        // Secciones
+        turns: 'Turnos',
+        myTurns: 'Mis turnos',
+        history: 'Historial',
+        treatments: 'Tratamientos y Servicios',
+        searchPlaceholder: 'Buscar por nombre o especialidad',
+        search: 'Buscar',
+        professionals: 'Profesionales',
+        contact: 'Contacto',
+        // Contacto
+        address: 'Dirección:',
+        phone: 'Tel:',
+        hours: 'Horarios:',
+        hoursValue: 'Lun-mier 8:00 - 20:00',
+        namePlaceholder: 'Nombre',
+        emailPlaceholder: 'Email',
+        messagePlaceholder: 'Consulta',
+        sendQuery: 'Enviar consulta',
+        querySent: 'Consulta enviada. Nos contactaremos por correo.',
+        // Footer
+        quickLinks: 'Enlaces rápidos:',
+        policies: 'Políticas:',
+        // Login
+        welcome: 'Bienvenido',
+        loginSubtitle: 'Inicia sesión para acceder a tu cuenta',
+        emailLabel: 'Correo electrónico',
+        emailPlaceholder: 'tu@email.com',
+        magicLinkText: 'Te enviaremos un enlace mágico a este correo para iniciar sesión de forma segura.',
+        continueEmail: 'Continuar con email',
+        orContinue: 'o continúa con',
+        cancel: 'Cancelar',
+        // Turnos
+        requestTurnTitle: 'Solicitar turno',
+        type: 'Tipo',
+        specialty: 'Especialidad',
+        professional: 'Profesional',
+        professionalOptional: '-- Profesional (opcional) --',
+        date: 'Fecha',
+        time: 'Hora',
+        patient: 'Nombre del paciente',
+        confirmTurn: 'Confirmar turno',
+        turnRequested: 'Turno solicitado con éxito',
+        reprogram: 'Reprogramar',
+        cancelTurn: 'Cancelar',
+        view: 'Ver',
+        pending: 'Pendiente',
+        confirmed: 'Confirmado',
+        canceled: 'Cancelado',
+        noTurns: 'No registrás turnos aún.',
+        delete: 'Eliminar',
+        deleteConfirm: '¿Eliminar este turno del historial?',
+        deleteSuccess: 'Turno eliminado del historial.',
+        deleteAfterCancel: '¿Deseas eliminar este turno del historial?',
+        // Detalles del turno
+        turnDetails: 'Detalles del turno',
+        turnDate: 'Fecha',
+        turnTime: 'Hora',
+        turnType: 'Tipo',
+        turnSpecialty: 'Especialidad',
+        turnProfessional: 'Profesional',
+        turnPatient: 'Paciente',
+        turnStatus: 'Estado',
+        assigned: 'Asignado',
+        notAssigned: 'Unassigned',
+        // Chatbot
+        chatTitle: 'Asistente Clínica Moguz',
+        chatGreeting: 'Hola 👋 Soy el asistente virtual de Clínica Moguz. ¿En qué puedo ayudarte?',
+        chatQueryTurns: 'Consultar turnos',
+        chatQueryTreatments: 'Ver tratamientos',
+        chatQueryContact: 'Horarios y contacto',
+        chatPlaceholder: 'Escribí tu consulta',
+        // Estados
+        welcomeUser: 'Bienvenido,',
+        logout: 'Cerrar sesión',
+        // Tratamientos y Profesionales
+        viewMore: 'Ver más',
+        requestTurnFor: 'Solicitar turno',
+        bookWithDoctor: 'Sacar turno con este médico',
+        // Footer
+        addressLabel: 'Dirección',
+        phoneLabel: 'Teléfono',
+        emailLabel: 'Email',
+        quickLinksLabel: 'Enlaces rápidos:',
+        turnsLink: 'Turnos',
+        treatmentsLink: 'Tratamientos',
+        contactLink: 'Contacto',
+        policiesLabel: 'Políticas:',
+        privacy: 'Privacidad',
+        terms: 'T&C',
+        // Tratamientos - nombres y especialidades
+        treatment1Name: 'Rinoplastía',
+        treatment1Spec: 'Cirugía facial',
+        treatment2Name: 'Liposucción',
+        treatment2Spec: 'Contorno corporal',
+        treatment3Name: 'Aumento mamario',
+        treatment3Spec: 'Cirugía mamaria',
+        treatment4Name: 'Toxina botulínica',
+        treatment4Spec: 'Estética',
+        // Profesionales - especialidades y biografías
+        prof1Spec: 'Cirugía Plástica',
+        prof1Bio: 'Licencia 12345. 15 años de experiencia.',
+        prof2Spec: 'Cirugía Reconstructiva',
+        prof2Bio: 'Especialista en reconstrucción post-trauma.',
+        prof3Spec: 'Estética',
+        prof3Bio: 'Tratamientos mínimamente invasivos.',
+        // Chatbot
+        chatBotName: 'Dr. Bot Moguz',
+        chatMyAppointments: '📅 Mis turnos',
+        chatNewAppointment: '➕ Nuevo turno',
+        chatTreatments: '💉 Tratamientos',
+        chatProfessionals: '👨‍⚕️ Profesionales',
+        chatSchedule: '🕐 Horarios',
+        chatContact: '📞 Contacto',
+        chatInputPlaceholder: 'Escribí tu consulta...',
+        chatGreeting: '¡Hola! 👋 Soy Dr. Bot, tu asistente virtual de Clínica Moguz. ¿En qué puedo ayudarte hoy?',
+        chatResponseAppointments: 'No tenés turnos registrados. <br>¿Querés <strong>solicitar uno ahora</strong>? 📅',
+        chatResponseNewAppointment: '¡Perfecto! Para solicitar un turno, hacé clic en el botón <strong>"Solicitar turno"</strong> en la parte superior de la página. 📅',
+        chatResponseTreatments: 'Ofrecemos diversos tratamientos:<br>• Rinoplastía<br>• Liposucción<br>• Aumento mamario<br>• Toxina botulínica<br><br>¿Querés conocer más detalles? 💉',
+        chatResponseProfessionals: 'Nuestro equipo está conformado por:<br>• <strong>Dra. Ana Moguz</strong> - Cirugía Plástica<br>• <strong>Dr. Luis Pérez</strong> - Cirugía Reconstructiva<br>• <strong>Dr. Mario Guzmán</strong> - Estética<br><br>Todos con amplia experiencia. 👨‍⚕️',
+        chatResponseSchedule: '<strong>Horarios de atención:</strong><br>🕐 Lunes a Viernes: 9:00 - 18:00<br>🕐 Sábados: 9:00 - 13:00<br><br>¡Te esperamos! 😊',
+        chatResponseContact: '<strong>Datos de contacto:</strong><br>📞 Tel: (+54) 9 11 1234 5678<br>📧 Email: contacto@clinicamoguz.com<br>📍 Dirección: Av. Corrientes 1234, CABA<br><br>¡Estamos para ayudarte! 💙',
+        chatResponsePricing: 'Los precios varían según el tratamiento. <br>Te recomiendo <strong>solicitar un turno</strong> para una evaluación personalizada y presupuesto sin cargo. 💰',
+        chatResponseUnknown: 'Disculpá, no entendí tu consulta. 🤔<br>Probá con las opciones rápidas o escribí:<br>• "Ver turnos"<br>• "Tratamientos"<br>• "Horarios"<br>• "Contacto"'
+      },
+      en: {
+        // Menú
+        menuHome: 'Home',
+        menuTreatments: 'Treatments',
+        menuProfessionals: 'Professionals',
+        menuTurns: 'Appointments',
+        menuContact: 'Contact',
+        // Header
+        brandSubtitle: 'Plastic Surgery • Reconstructive • Aesthetic',
+        requestTurn: 'Request appointment',
+        login: 'Sign in',
+        // Hero
+        heroTitle: 'Moguz Clinic — Excellence in plastic and aesthetic surgery',
+        heroSubtitle: 'Personalized care, professional team and cutting-edge technology. Book your in-person or virtual appointment in just a few steps.',
+        heroRequest: 'Request appointment now',
+        heroTreatments: 'Discover our treatments',
+        nextTurns: 'Upcoming appointments',
+        noNextTurns: 'No upcoming appointments',
+        // Secciones
+        turns: 'Appointments',
+        myTurns: 'My appointments',
+        history: 'History',
+        treatments: 'Treatments and Services',
+        searchPlaceholder: 'Search by name or specialty',
+        search: 'Search',
+        professionals: 'Professionals',
+        contact: 'Contact',
+        // Contacto
+        address: 'Address:',
+        phone: 'Phone:',
+        hours: 'Hours:',
+        hoursValue: 'Mon-Wed 8:00 AM - 8:00 PM',
+        namePlaceholder: 'Name',
+        emailPlaceholder: 'Email',
+        messagePlaceholder: 'Inquiry',
+        sendQuery: 'Send inquiry',
+        querySent: 'Inquiry sent. We will contact you by email.',
+        // Footer
+        quickLinks: 'Quick links:',
+        policies: 'Policies:',
+        // Login
+        welcome: 'Welcome',
+        loginSubtitle: 'Sign in to access your account',
+        emailLabel: 'Email address',
+        emailPlaceholder: 'your@email.com',
+        magicLinkText: 'We will send you a magic link to this email to sign in securely.',
+        continueEmail: 'Continue with email',
+        orContinue: 'or continue with',
+        cancel: 'Cancel',
+        // Turnos
+        requestTurnTitle: 'Request appointment',
+        type: 'Type',
+        specialty: 'Specialty',
+        professional: 'Professional',
+        professionalOptional: '-- Professional (optional) --',
+        date: 'Date',
+        time: 'Time',
+        patient: 'Patient name',
+        confirmTurn: 'Confirm appointment',
+        turnRequested: 'Appointment requested successfully',
+        reprogram: 'Reschedule',
+        cancelTurn: 'Cancel',
+        view: 'View',
+        pending: 'Pending',
+        confirmed: 'Confirmed',
+        canceled: 'Canceled',
+        noTurns: 'You have no appointments yet.',
+        delete: 'Delete',
+        deleteConfirm: 'Delete this appointment from history?',
+        deleteSuccess: 'Appointment deleted from history.',
+        deleteAfterCancel: 'Do you want to delete this appointment from history?',
+        // Detalles del turno
+        turnDetails: 'Appointment details',
+        turnDate: 'Date',
+        turnTime: 'Time',
+        turnType: 'Type',
+        turnSpecialty: 'Specialty',
+        turnProfessional: 'Professional',
+        turnPatient: 'Patient',
+        turnStatus: 'Status',
+        assigned: 'Assigned',
+        notAssigned: 'Unassigned',
+        // Chatbot
+        chatTitle: 'Moguz Clinic Assistant',
+        chatGreeting: 'Hello 👋 I am the virtual assistant of Moguz Clinic. How can I help you?',
+        chatQueryTurns: 'Check appointments',
+        chatQueryTreatments: 'View treatments',
+        chatQueryContact: 'Hours and contact',
+        chatPlaceholder: 'Type your inquiry',
+        // Estados
+        welcomeUser: 'Welcome,',
+        logout: 'Sign out',
+        // Tratamientos y Profesionales
+        viewMore: 'View more',
+        requestTurnFor: 'Request appointment',
+        bookWithDoctor: 'Book appointment with this doctor',
+        // Footer
+        addressLabel: 'Address',
+        phoneLabel: 'Phone',
+        emailLabel: 'Email',
+        quickLinksLabel: 'Quick links:',
+        turnsLink: 'Appointments',
+        treatmentsLink: 'Treatments',
+        contactLink: 'Contact',
+        policiesLabel: 'Policies:',
+        privacy: 'Privacy',
+        terms: 'T&C',
+        // Tratamientos - nombres y especialidades
+        treatment1Name: 'Rhinoplasty',
+        treatment1Spec: 'Facial Surgery',
+        treatment2Name: 'Liposuction',
+        treatment2Spec: 'Body Contouring',
+        treatment3Name: 'Breast Augmentation',
+        treatment3Spec: 'Breast Surgery',
+        treatment4Name: 'Botulinum Toxin',
+        treatment4Spec: 'Aesthetic',
+        // Profesionales - especialidades y biografías
+        prof1Spec: 'Plastic Surgery',
+        prof1Bio: 'License 12345. 15 years of experience.',
+        prof2Spec: 'Reconstructive Surgery',
+        prof2Bio: 'Specialist in post-trauma reconstruction.',
+        prof3Spec: 'Estética',
+        prof3Bio: 'Minimally invasive treatments.'
+      }
+    };
+
+    let currentLang = localStorage.getItem('clinicLang') || 'es';
+    tempCurrentLang = currentLang; // Sincronizar variable temporal
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      tempCurrentLang = lang; // Sincronizar variable temporal
+      localStorage.setItem('clinicLang', lang);
+      document.documentElement.lang = lang;
+      updateTranslations();
+    }
+
+    function t(key) {
+      return translations[currentLang]?.[key] || translations.es[key] || key;
+    }
+
+    function updateTranslations() {
+      // Actualizar elementos con data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (el.tagName === 'INPUT' && el.type !== 'submit' && el.type !== 'button') {
+          el.placeholder = t(key);
+        } else if (el.tagName === 'TEXTAREA') {
+          el.placeholder = t(key);
+        } else {
+          el.textContent = t(key);
+        }
+      });
+      
+      // Actualizar elementos específicos
+      const elements = {
+        'hero-title': t('heroTitle'),
+        'hero-subtitle': t('heroSubtitle'),
+        'hero-request': t('heroRequest'),
+        'hero-treat': t('heroTreatments'),
+        'next-turns-title': t('nextTurns'),
+        'turns-title': t('turns'),
+        'my-turns-btn': t('myTurns'),
+        'history-btn': t('history'),
+        'treatments-title': t('treatments'),
+        't-search': t('searchPlaceholder'),
+        't-search-btn': t('search'),
+        'professionals-title': t('professionals'),
+        'contact-title': t('contact'),
+        'open-turn': t('requestTurn'),
+        'login-btn': t('login')
+      };
+
+      Object.entries(elements).forEach(([id, text]) => {
+        const el = document.getElementById(id);
+        if (el) {
+          if (el.tagName === 'INPUT' || el.tagName === 'BUTTON') {
+            if (el.type === 'submit' || el.tagName === 'BUTTON') {
+              el.textContent = text;
+            } else {
+              el.placeholder = text;
+            }
+          } else {
+            el.textContent = text;
+          }
+        }
+      });
+
+      // Actualizar menú desplegable
+      const menuLinks = document.querySelectorAll('.dropdown-menu a');
+      if (menuLinks.length >= 5) {
+        menuLinks[0].textContent = '🏠 ' + t('menuHome');
+        menuLinks[1].textContent = '💉 ' + t('menuTreatments');
+        menuLinks[2].textContent = '👨‍⚕️ ' + t('menuProfessionals');
+        menuLinks[3].textContent = '📅 ' + t('menuTurns');
+        menuLinks[4].textContent = '📞 ' + t('menuContact');
+      }
+
+      // Actualizar brand subtitle
+      const brandSubtitle = document.querySelector('.brand > div > div:last-child');
+      if (brandSubtitle) {
+        brandSubtitle.textContent = t('brandSubtitle');
+      }
+      
+      // Actualizar contenido dinámico (solo si las funciones ya están definidas)
+      try {
+        if (typeof renderNextTurns === 'function') {
+          renderNextTurns();
+        }
+        if (typeof renderTurnsTable === 'function') {
+          renderTurnsTable();
+        }
+        // La carga se realiza en init()
+      } catch(e) {
+        console.log('Algunas funciones aún no están disponibles:', e);
+      }
+    }
+
+    /* ---------- Estado local (simulado) ---------- */
+    // URLs de imágenes de prueba simplificadas y ESTABLECIDAS LOCALMENTE
+  const sampleTreatments = [
+  {
+    id: 1,
+    name: "Rhinoplasty",
+    spec: "Facial Surgery",
+    img: "https://images.unsplash.com/photo-1557002008-01306733a465?q=80&w=600&h=400&fit=crop&auto=format"
+  },
+  {
+    id: 2,
+    name: "Liposuction",
+    spec: "Body Contouring",
+    img: "https://images.unsplash.com/photo-1582276535974-9f89e4c19d65?q=80&w=600&h=400&fit=crop&auto=format"
+  },
+  {
+    id: 3,
+    name: "Breast Augmentation",
+    spec: "Breast Surgery",
+    img: "https://images.unsplash.com/photo-1594966601428-1b6c738c828e?q=80&w=600&h=400&fit=crop&auto=format"
+  },
+  {
+    id: 4,
+    name: "Botulinum Toxin",
+    spec: "Aesthetic",
+    img: "https://images.unsplash.com/photo-1588636284687-3532c66d2109?q=80&w=600&h=400&fit=crop&auto=format"
+  }
+];
+
+
+    const professionals = [
+      {id:1,name:'Dra. Ana Moguz',spec:'Cirugía Plástica',bio:'Matrícula 12345. 15 años de experiencia.'},
+      {id:2,name:'Dr. Luis Pérez',spec:'Cirugía Reconstructiva',bio:'Especialista en reconstrucción post-trauma.'},
+      {id:3,name:'Dr. Mario Morales Guzman',spec:'Estética',bio:'tratamientos mínimamente invasivos.'}
+    ];
+
+    // Guardar/leer turnos en localStorage (simulación)
+    function loadTurns(){
+      try{ return JSON.parse(localStorage.getItem('cm_turns')||'[]') }catch(e){return []}
+    }
+    function saveTurns(arr){ localStorage.setItem('cm_turns', JSON.stringify(arr)) }
+
+    /* ---------- Render inicial ---------- */
+    const treatmentsGrid = document.getElementById('treatments-grid');
+    const profGrid = document.getElementById('professionals-grid');
+    const nextTurnsDiv = document.getElementById('next-turns');
+
+    function renderTreatments(list){
+      let dataToRender = list;
+      if (!list || list.length === 0) {
+        console.warn("La lista de tratamientos de Supabase está vacía. Usando datos de muestra locales.");
+        dataToRender = sampleTreatments; // Usar lista local si la recibida está vacía
+      } else {
+        console.log("Cargando tratamientos desde la fuente proporcionada.");
+      }
+      
+      treatmentsGrid.innerHTML = '';
+      dataToRender.forEach(treatment=>{
+        const el = document.createElement('div'); el.className='card treatment-card';
+        const treatmentName = t(`treatment${treatment.id}Name`) || treatment.name;
+        const treatmentSpec = t(`treatment${treatment.id}Spec`) || treatment.spec;
+        // ⭐️ IMAGEN SIN EL ONERROR para evitar problemas de recursión ⭐️
+        el.innerHTML = `<img src="${treatment.img}" alt="${treatmentName}" /><h3>${treatmentName}</h3><div style="color:var(--muted)">${treatmentSpec}</div><div style="margin-top:12px;display:flex;gap:8px"><button class='btn btn-ghost' onclick='viewTreatment(${treatment.id})'>${t('viewMore')}</button><button class='btn btn-primary' onclick='requestTurnForTreat(${treatment.id})'>${t('requestTurnFor')}</button></div>`;
+        treatmentsGrid.appendChild(el);
+      })
+    }
+
+    function renderProfessionals(list){
+        let dataToRender = list;
+        if (!list || list.length === 0) {
+            console.warn("La lista de profesionales de Supabase está vacía. Usando datos de muestra locales.");
+            dataToRender = professionals; // Usar lista local si la recibida está vacía
+        } else {
+            console.log("Cargando profesionales desde la fuente proporcionada.");
+        }
+
+      profGrid.innerHTML='';
+      dataToRender.forEach(p=>{
+        const el = document.createElement('div'); el.className='card';
+        const profSpec = t(`prof${p.id}Spec`) || p.spec;
+        const profBio = t(`prof${p.id}Bio`) || p.bio;
+        el.innerHTML = `<h3>${p.name}</h3><div style="color:var(--muted)">${profSpec}</div><p style="margin:8px 0">${profBio}</p><div style="text-align:right"><button class='btn btn-primary' onclick='openTurnWithPro(${p.id})'>${t('bookWithDoctor')}</button></div>`;
+        profGrid.appendChild(el);
+      })
+    }
+
+    function renderNextTurns(){
+      const turns = loadTurns().filter(x=>x.status!=='cancelado').slice(0,3);
+      if(turns.length===0){ nextTurnsDiv.innerHTML = `<div style="color:var(--muted);padding:10px;border:1px dashed var(--muted);border-radius:var(--radius-md);margin-top:10px">${t('noNextTurns')}</div>`; return }
+      nextTurnsDiv.innerHTML = turns.map(x=>`<div class="card" style="margin-bottom:10px"><strong>${x.specialty} — ${x.professional||(currentLang === 'es' ? 'Sin asignar' : 'Unassigned')}</strong><div style="color:var(--muted)">${x.date} ${x.time} • ${x.type}</div></div>`).join('')
+    }
+    
+    // NOTA: Se eliminó la llamada directa a renderTreatments/renderProfessionals aquí. Ahora se hace en init().
+
+    /* ---------- Buscador ---------- */
+    document.getElementById('t-search-btn').addEventListener('click', ()=>{
+      const q = document.getElementById('t-search').value.trim().toLowerCase();
+      // Asegurar que la búsqueda se haga sobre la lista local si la DB falla
+      const sourceList = (typeof treatments !== 'undefined' && treatments.length > 0) ? treatments : sampleTreatments; 
+      if(!q){ renderTreatments(sourceList); return }
+      const res = sourceList.filter(t=>t.name.toLowerCase().includes(q) || t.spec.toLowerCase().includes(q));
+      renderTreatments(res);
+    })
+
+    /* ---------- Turnos modal logic ---------- */
+    const modalRoot = document.getElementById('modal-root');
+
+    function openTurnModal(opts={}){
+      // opts can include specialty, professional
+      const closeLabel = currentLang === 'es' ? 'Cerrar' : 'Close';
+      const rescheduleText = currentLang === 'es' ? 'Podés reprogramar o cancelar desde "Mis turnos"' : 'You can reschedule or cancel from "My appointments"';
+      modalRoot.innerHTML = `
+        <div class="modal-backdrop" role="dialog" aria-modal="true" style="position:fixed;inset:0;background:rgba(2,6,23,0.6);display:flex;align-items:center;justify-content:center;z-index:60;backdrop-filter:blur(8px)">
+          <div class="modal" style="width:100%;max-width:520px;background:var(--card);padding:0;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden">
+            <div style="background:linear-gradient(135deg,var(--accent),var(--accent-600));padding:16px 20px;color:white">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <h3 style="margin:0;font-size:20px;color:white">${t('requestTurnTitle')}</h3>
+                <button aria-label="${closeLabel}" id="close-modal" class="btn" style="background:rgba(255,255,255,0.2);border:none;color:white;border-radius:50%;width:32px;height:32px;padding:0;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+              </div>
+            </div>
+            <form id="turn-form" style="padding:20px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+                <div>
+                  <label style="display:block;margin-bottom:6px;font-weight:600;color:var(--text);font-size:13px">${t('type')}</label>
+                  <select name="type" required style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border-color);background:var(--card);color:var(--text);font-size:14px">
+                    <option value="Presencial">${currentLang === 'es' ? 'Presencial' : 'In-person'}</option>
+                    <option value="Virtual">${currentLang === 'es' ? 'Virtual' : 'Virtual'}</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="display:block;margin-bottom:6px;font-weight:600;color:var(--text);font-size:13px">${t('specialty')}</label>
+                  <select name="specialty" required style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border-color);background:var(--card);color:var(--text);font-size:14px">
+                    <option value="Cirugía Plástica">${currentLang === 'es' ? 'Cirugía Plástica' : 'Plastic Surgery'}</option>
+                    <option value="Cirugía Reconstructiva">${currentLang === 'es' ? 'Cirugía Reconstructiva' : 'Reconstructive Surgery'}</option>
+                    <option value="Estética">${currentLang === 'es' ? 'Estética' : 'Aesthetic'}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="margin-bottom:12px">
+                <label style="display:block;margin-bottom:6px;font-weight:600;color:var(--text);font-size:13px">${t('professional')}</label>
+                <select name="professional" id="professional-select" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border-color);background:var(--card);color:var(--text);font-size:14px">
+                  <option value="">${t('professionalOptional')}</option>
+                </select>
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+                <div>
+                  <label style="display:block;margin-bottom:6px;font-weight:600;color:var(--text);font-size:13px">${t('date')}</label>
+                  <input type="date" name="date" required style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border-color);background:var(--card);color:var(--text);font-size:14px" />
+                </div>
+                <div>
+                  <label style="display:block;margin-bottom:6px;font-weight:600;color:var(--text);font-size:13px">${t('time')}</label>
+                  <input type="time" name="time" required style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border-color);background:var(--card);color:var(--text);font-size:14px" />
+                </div>
+              </div>
+
+              <div style="margin-bottom:16px">
+                <label style="display:block;margin-bottom:6px;font-weight:600;color:var(--text);font-size:13px">${t('patient')}</label>
+                <input type="text" name="patient" placeholder="${t('patient')}" required style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border-color);background:var(--card);color:var(--text);font-size:14px" />
+              </div>
+
+              <div style="background:var(--glass);padding:10px;border-radius:8px;margin-bottom:16px">
+                <small style="color:var(--muted);font-size:12px;line-height:1.4">ℹ️ ${rescheduleText}</small>
+              </div>
+
+              <div style="display:flex;gap:10px;justify-content:flex-end">
+                <button type="button" id="cancel-modal" class="btn btn-ghost" style="padding:10px 20px;font-size:14px;font-weight:600">${t('cancel')}</button>
+                <button type="submit" class="btn btn-primary" style="padding:10px 24px;font-size:14px;font-weight:600">${t('confirmTurn')}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+
+      // fill professional select
+      const proSel = document.getElementById('professional-select');
+      proSel.innerHTML = `<option value="">${t('professionalOptional')}</option>` + professionals.map(p=>{
+        const profSpec = t(`prof${p.id}Spec`) || p.spec;
+        return `<option value="${p.name}">${p.name} — ${profSpec}</option>`;
+      }).join('');
+
+      const closeBtn = document.getElementById('close-modal');
+      const cancelBtn = document.getElementById('cancel-modal');
+      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+      document.getElementById('turn-form').addEventListener('submit', onConfirmTurn);
+    }
+
+    function closeModal(){ modalRoot.innerHTML = '' }
+
+    async function onConfirmTurn(e) {
+        e.preventDefault();
+        const f = e.target;
+
+        const data = {
+            id: Date.now(),
+            type: f.type.value,
+            specialty: f.specialty.value,
+            professional: f.professional.value || null,
+            date: f.date.value,
+            time: f.time.value,
+            patient: f.patient.value,
+            status: 'pendiente'
+        };
+
+        // Guardar localmente (simulación)
+        const arr = loadTurns();
+        arr.unshift(data);
+        saveTurns(arr);
+
+        // 🚀 Guardar también en la base de datos Supabase
+        if (typeof supabase !== 'undefined') {
+            await ensureSupabaseReady();
+            const { error } = await window.supabaseClient.from('turns').insert([data]);
+            if (error) {
+                console.error('❌ Error guardando en Supabase:', error);
+                customAlert('Error al guardar el turno en la base de datos. Detalles: ' + error.message);
+            } else {
+                console.log('✅ Turno guardado en Supabase correctamente.');
+            }
+        } else {
+            console.warn('Supabase no está disponible. Solo se guardó localmente.');
+        }
+
+        closeModal();
+        renderTurnsTable();
+        renderNextTurns();
+        customAlert(t('turnRequested')); // Alertamos el éxito local o general
+    }
+
+
+    document.getElementById('open-turn').addEventListener('click', ()=>openTurnModal());
+    document.getElementById('hero-request').addEventListener('click', ()=>openTurnModal());
+    
+    // CORRECCIÓN: Event listener para el botón "Conocé nuestros tratamientos"
+    document.getElementById('hero-treat').addEventListener('click', (e) => {
+      e.preventDefault();
+      closeMenu('#tratamientos');
+    });
+    
+
+    function requestTurnForTreat(id){
+      const t = sampleTreatments.find(x=>x.id===id);
+      openTurnModal({specialty:t.spec});
+      // we could prefill specialty if wanted
+    }
+
+    function openTurnWithPro(proId){
+      const p = professionals.find(x=>x.id===proId);
+      openTurnModal({professional:p.name});
+      // preselect professional after modal opens
+      setTimeout(()=>{
+        const sel = document.getElementById('professional-select'); if(sel){ sel.value = p.name }
+      }, 80);
+    }
+
+    window.requestTurnForTreat = requestTurnForTreat;
+    window.openTurnWithPro = openTurnWithPro;
+    window.viewTreatment = function(id){
+      const treatment = sampleTreatments.find(x=>x.id===id);
+      if (!treatment) return;
+      const treatmentName = t(`treatment${treatment.id}Name`) || treatment.name;
+      const treatmentSpec = t(`treatment${treatment.id}Spec`) || treatment.spec;
+      const specialtyLabel = currentLang === 'es' ? 'Especialidad' : 'Specialty';
+      const durationLabel = currentLang === 'es' ? 'Duración promedio' : 'Average duration';
+      const indicationsLabel = currentLang === 'es' ? 'Indicaciones' : 'Indications';
+      const consultText = currentLang === 'es' ? 'Consultar en evaluación médica.' : 'Consult during medical evaluation.';
+      const message = `${treatmentName}\n\n${specialtyLabel}: ${treatmentSpec}\n${durationLabel}: 60-120 min (${currentLang === 'es' ? 'ejemplo' : 'example'})\n${indicationsLabel}: ${consultText}`;
+      customAlert(message, treatmentName);
+    }
+
+    /* ---------- Mis turnos / Tabla ---------- */
+    function renderTurnsTable(){
+      const area = document.getElementById('turns-table-area');
+      const arr = loadTurns();
+      if(arr.length===0){ area.innerHTML = `<div style="color:var(--muted);padding:10px;border:1px dashed var(--muted);border-radius:var(--radius-md)">${t('noTurns')}</div>`; return }
+      const dateLabel = currentLang === 'es' ? 'Fecha' : 'Date';
+      const timeLabel = currentLang === 'es' ? 'Hora' : 'Time';
+      const doctorLabel = currentLang === 'es' ? 'Médico' : 'Doctor';
+      const typeLabel = currentLang === 'es' ? 'Tipo' : 'Type';
+      const statusLabel = currentLang === 'es' ? 'Estado' : 'Status';
+      const actionsLabel = currentLang === 'es' ? 'Acciones' : 'Actions';
+      let html = `<table><thead><tr><th>${dateLabel}</th><th>${timeLabel}</th><th>${doctorLabel}</th><th>${typeLabel}</th><th>${statusLabel}</th><th>${actionsLabel}</th></tr></thead><tbody>`;
+      arr.forEach(turn=>{
+        const isCanceled = turn.status === 'cancelado';
+        let actionButtons = '';
+        if (isCanceled) {
+          // Si está cancelado, solo mostrar Ver y Eliminar
+          actionButtons = `<button class='btn btn-ghost' style='padding:6px' onclick="viewDetails(${turn.id})">${t('view')}</button> <button class='btn btn-ghost' style='padding:6px;color:var(--accent)' onclick="deleteTurn(${turn.id})">${t('delete')}</button>`;
+        } else {
+          // Si no está cancelado, mostrar Reprogramar, Cancelar y Ver
+          actionButtons = `<button class='btn btn-ghost' style='padding:6px' onclick="reprogram(${turn.id})">${t('reprogram')}</button> <button class='btn btn-ghost' style='padding:6px' onclick="cancelTurn(${turn.id})">${t('cancelTurn')}</button> <button class='btn btn-ghost' style='padding:6px' onclick="viewDetails(${turn.id})">${t('view')}</button>`;
+        }
+        html += `<tr><td>${turn.date}</td><td>${turn.time}</td><td>${turn.professional||'-'}</td><td>${turn.type}</td><td>${statusPill(turn.status)}</td><td>${actionButtons}</td></tr>`;
+      })
+      html += '</tbody></table>';
+      area.innerHTML = html;
+    }
+
+    function statusPill(s){
+      if(s==='pendiente') return `<span class="pill pending">${t('pending')}</span>`;
+      if(s==='confirmado') return `<span class="pill confirmed">${t('confirmed')}</span>`;
+      return `<span class="pill cancel">${t('canceled')}</span>`;
+    }
+
+    function reprogram(id){
+      const arr = loadTurns(); const i = arr.findIndex(x=>x.id===id); if(i<0) return; openTurnModal();
+      // after modal opens, prefill with current data
+      setTimeout(()=>{
+        const f = document.querySelector('#modal-root form'); if(!f) return; const turn = arr[i]; f.type.value=turn.type; f.specialty.value=turn.specialty; f.date.value=turn.date; f.time.value=turn.time; f.patient.value=turn.patient; if(turn.professional) document.getElementById('professional-select').value = turn.professional;
+        // override submit to update instead of push
+        f.removeEventListener('submit', onConfirmTurn);
+        f.addEventListener('submit', async function upd(e){ e.preventDefault(); arr[i].type = f.type.value; arr[i].specialty=f.specialty.value; arr[i].professional=f.professional.value||null; arr[i].date=f.date.value; arr[i].time=f.time.value; arr[i].patient=f.patient.value; saveTurns(arr); closeModal(); renderTurnsTable(); renderNextTurns(); await customAlert(currentLang === 'es' ? 'Turno reprogramado' : 'Appointment rescheduled'); f.removeEventListener('submit', upd); f.addEventListener('submit', onConfirmTurn); })
+      },100)
+    }
+
+    async function cancelTurn(id){ 
+      const confirmed = await customConfirm(currentLang === 'es' ? 'Confirmar cancelación?' : 'Confirm cancellation?');
+      if(!confirmed) return; 
+      const arr = loadTurns(); 
+      const i = arr.findIndex(x=>x.id===id); 
+      if(i<0) return; 
+      arr[i].status='cancelado'; 
+      saveTurns(arr); 
+      renderTurnsTable(); 
+      renderNextTurns();
+      
+      // Preguntar si quiere eliminar del historial
+      setTimeout(async () => {
+        const deleteConfirmed = await customConfirm(t('deleteAfterCancel'));
+        if(deleteConfirmed) {
+          deleteTurn(id);
+        }
+      }, 300);
+    }
+    
+    async function deleteTurn(id) {
+      const confirmed = await customConfirm(t('deleteConfirm'));
+      if(!confirmed) return;
+      const arr = loadTurns();
+      const filtered = arr.filter(x => x.id !== id);
+      saveTurns(filtered);
+      renderTurnsTable();
+      renderNextTurns();
+      customAlert(t('deleteSuccess'));
+    }
+    
+    window.deleteTurn = deleteTurn;
+    
+    function viewDetails(id){ 
+      const turn = loadTurns().find(x=>x.id===id); 
+      if(!turn) return;
+      
+      const statusText = turn.status === 'pendiente' ? t('pending') : 
+                         turn.status === 'confirmado' ? t('confirmed') : 
+                         t('canceled');
+      
+      const typeText = turn.type === 'Presencial' ? (currentLang === 'es' ? 'Presencial' : 'In-person') : 'Virtual';
+      
+      modalRoot.innerHTML = `
+        <div class="modal-backdrop" role="dialog" aria-modal="true">
+          <div class="modal" style="max-width:500px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+              <h3>${t('turnDetails')}</h3>
+              <button aria-label="${currentLang === 'es' ? 'Cerrar' : 'Close'}" id="close-details-modal" class="btn btn-ghost" style="border-radius:50%;padding:6px 10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center">✕</button>
+            </div>
+            
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div style="display:flex;align-items:center;padding:12px;background:var(--glass);border-radius:var(--radius-md);border-left:4px solid var(--accent)">
+                <div style="flex:1">
+                  <div style="font-size:12px;color:var(--muted);margin-bottom:4px">${t('turnDate')}</div>
+                  <div style="font-weight:600;color:var(--text)">${turn.date}</div>
+                </div>
+                <div style="flex:1">
+                  <div style="font-size:12px;color:var(--muted);margin-bottom:4px">${t('turnTime')}</div>
+                  <div style="font-weight:600;color:var(--text)">${turn.time}</div>
+                </div>
+              </div>
+              
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <div style="padding:12px;background:var(--glass);border-radius:var(--radius-md)">
+                  <div style="font-size:12px;color:var(--muted);margin-bottom:4px">${t('turnType')}</div>
+                  <div style="font-weight:600;color:var(--text)">${typeText}</div>
+                </div>
+                <div style="padding:12px;background:var(--glass);border-radius:var(--radius-md)">
+                  <div style="font-size:12px;color:var(--muted);margin-bottom:4px">${t('turnStatus')}</div>
+                  <div>${statusPill(turn.status)}</div>
+                </div>
+              </div>
+              
+              <div style="padding:12px;background:var(--glass);border-radius:var(--radius-md)">
+                <div style="font-size:12px;color:var(--muted);margin-bottom:4px">${t('turnSpecialty')}</div>
+                <div style="font-weight:600;color:var(--text)">${turn.specialty}</div>
+              </div>
+              
+              <div style="padding:12px;background:var(--glass);border-radius:var(--radius-md)">
+                <div style="font-size:12px;color:var(--muted);margin-bottom:4px">${t('turnProfessional')}</div>
+                <div style="font-weight:600;color:var(--text)">${turn.professional || t('notAssigned')}</div>
+              </div>
+              
+              <div style="padding:12px;background:var(--glass);border-radius:var(--radius-md)">
+                <div style="font-size:12px;color:var(--muted);margin-bottom:4px">${t('turnPatient')}</div>
+                <div style="font-weight:600;color:var(--text)">${turn.patient}</div>
+              </div>
+            </div>
+            
+            <div style="margin-top:24px;display:flex;justify-content:flex-end;gap:12px">
+              <button type="button" id="close-details-btn" class="btn btn-ghost">${t('cancel')}</button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('close-details-modal').addEventListener('click', closeModal);
+      document.getElementById('close-details-btn').addEventListener('click', closeModal);
+    }
+    
+    window.viewDetails = viewDetails;
+
+    document.getElementById('my-turns-btn').addEventListener('click', ()=>{ renderTurnsTable(); window.scrollTo({top:document.getElementById('turnos').offsetTop-80,behavior:'smooth'}) })
+    document.getElementById('history-btn').addEventListener('click', async ()=>{ 
+      const arr = loadTurns(); 
+      const hist = arr.map(x=>`${x.date} ${x.time} — ${x.specialty} — ${x.status}`).join('\n'); 
+      const historyTitle = currentLang === 'es' ? 'Historial' : 'History';
+      const noHistory = currentLang === 'es' ? 'No hay historial' : 'No history';
+      await customAlert((hist||noHistory), historyTitle);
+    })
+
+    /* ---------- Chatbot ---------- */
+    const chatRoot = document.getElementById('chat-root');
+    function renderChat(open=false){
+      chatRoot.innerHTML = open ? `
+        <div class="chat-window" role="dialog" aria-label="${t('chatBotName')}">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px;">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:24px">🤖</span>
+              <strong style="font-size:16px;color:#1565c0">${t('chatBotName')}</strong>
+            </div>
+            <button id="close-chat" class='btn btn-ghost' style='border-radius:50%;width:32px;height:32px;min-width:32px;display:flex;align-items:center;justify-content:center;padding:0;font-size:18px;margin:-6px -6px 0 0;background:white;border:1px solid #90caf9'>✕</button>
+          </div>
+          <div class="chat-log" id="chat-log"><div class="msg bot">${t('chatGreeting')}</div></div>
+          <div class="quick-buttons">
+            <button onclick="chatQuick('${t('chatMyAppointments')}')">$${t('chatMyAppointments')}</button>
+            <button onclick="chatQuick('${t('chatNewAppointment')}')">$${t('chatNewAppointment')}</button>
+            <button onclick="chatQuick('${t('chatTreatments')}')">$${t('chatTreatments')}</button>
+            <button onclick="chatQuick('${t('chatProfessionals')}')">$${t('chatProfessionals')}</button>
+            <button onclick="chatQuick('${t('chatSchedule')}')">$${t('chatSchedule')}</button>
+            <button onclick="chatQuick('${t('chatContact')}')">$${t('chatContact')}</button>
+          </div>
+          <form id="chat-form" style="margin-top:12px">
+            <input name="q" placeholder="${t('chatInputPlaceholder')}" style="width:100%;padding:12px;border-radius:var(--radius-md);border:2px solid #90caf9;font-size:14px" />
+          </form>
+        </div>
+      ` : `<div class="chat-bubble" id="open-chat" aria-label="Abrir chat">💬</div>`;
+      if(open) document.getElementById('close-chat').addEventListener('click', ()=>renderChat(false)); 
+      else document.getElementById('open-chat').addEventListener('click', ()=>renderChat(true));
+      const cf = document.getElementById('chat-form'); 
+      if(cf){ cf.addEventListener('submit', (e)=>{ e.preventDefault(); const q = cf.q.value.trim(); if(!q) return; pushUserMsg(q); cf.q.value=''; setTimeout(()=>botReply(q),600) }) }
+    }
+    
+    function pushUserMsg(txt){ 
+      const log = document.getElementById('chat-log'); if(!log) return; 
+      const el = document.createElement('div'); el.className='msg user'; el.textContent = txt; 
+      log.appendChild(el); log.scrollTop = log.scrollHeight; 
+    }
+    
+    function pushBotMsg(txt){ 
+      const log = document.getElementById('chat-log'); if(!log) return; 
+      const el = document.createElement('div'); el.className='msg bot'; el.innerHTML = txt; 
+      log.appendChild(el); log.scrollTop = log.scrollHeight; 
+    }
+    
+    function botReply(q){
+      const query = q.toLowerCase();
+      if(/mis turnos|ver.*turnos|my appointments|check appointments/.test(query)){ 
+        pushBotMsg(t('chatResponseAppointments')); return 
+      }
+      if(/solicitar.*turno|nuevo.*turno|pedir.*turno|request.*appointment|new.*appointment/.test(query)){ 
+        pushBotMsg(t('chatResponseNewAppointment')); return 
+      }
+      if(/tratamiento|estética|rinoplast|lipo|botox|cirug|treatment|aesthetic|rhinoplast|surgery/.test(query)){ 
+        pushBotMsg(t('chatResponseTreatments')); return 
+      }
+      if(/profesional|doctor|médico|equipo|professional|team/.test(query)){ 
+        pushBotMsg(t('chatResponseProfessionals')); return 
+      }
+      if(/horario|hora|atencion|atención|schedule|hours|office hours/.test(query)){ 
+        pushBotMsg(t('chatResponseSchedule')); return 
+      }
+      if(/contacto|tel|telefono|teléfono|email|mail|dirección|direccion|ubicación|ubicacion|contact|phone|address|location/.test(query)){ 
+        pushBotMsg(t('chatResponseContact')); return 
+      }
+      if(/precio|costo|cuanto.*cuesta|valor|price|pricing|cost/.test(query)){ 
+        pushBotMsg(t('chatResponsePricing')); return 
+      }
+      pushBotMsg(t('chatResponseUnknown'))
+    }
+    
+    function chatQuick(q){ pushUserMsg(q); setTimeout(()=>botReply(q),200) }
+    window.chatQuick = chatQuick;
+    renderChat(false);
+
+    /* ---------- Theme / Language / Contact ---------- */
+    document.getElementById('toggle-theme').addEventListener('click', ()=>{
+      document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+    })
+    document.getElementById('lang-select').addEventListener('change', (e)=>{ 
+      setLanguage(e.target.value);
+    })
+    
+    // Inicializar idioma al cargar (después de que todo esté listo)
+    setTimeout(() => {
+      const langSelect = document.getElementById('lang-select');
+      if (langSelect) {
+        langSelect.value = currentLang;
+      }
+      updateTranslations();
+    }, 100);
+
+    document.getElementById('contact-form').addEventListener('submit',async (e)=>{ e.preventDefault(); await customAlert(t('querySent')); e.target.reset(); })
+
+    // Accessibility: brand click scroll to top
+    document.getElementById('brand-link').addEventListener('click',(e)=>{ e.preventDefault(); window.scrollTo({top:0,behavior:'smooth'}) })
+
+    // render turns table if any exist on load
+    renderTurnsTable();
+
+    /* ---------- Login + Supabase Bootstrap ---------- */
+    // Supabase config (usar tus credenciales reales)
+    const SUPABASE_URL = 'https://csrmylnhdhwurnmmogfl.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzcm15bG5oZGh3dXJubW1vZ2ZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI1NTcxODcsImV4cCI6MjA3ODEzMzE4N30.GEnlUM_PiPK2X_lpoio9gm0pwBAC7uLbhqkJ5HohHug';
+
+    // Carga la librería de Supabase y crea el cliente si no existe
+    async function ensureSupabaseReady(){
+        if (!window.supabase) {
+          await new Promise((resolve)=>{
+            const s = document.createElement('script');
+            s.src = 'https://unpkg.com/@supabase/supabase-js';
+            s.onload = resolve; document.head.appendChild(s);
+          });
+        }
+        if (!window.supabaseClient) {
+          window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        }
+        // Forzar origen válido si estamos en localhost
+        window.AUTH_SITE_ORIGIN = window.location.origin.includes('localhost')
+          ? 'https://elaborate-sprinkles-563313.netlify.app'
+          : window.location.origin;
+        return window.supabaseClient;
+    }
+
+    /* ---------- Login modal (Supabase Ready) ---------- */
+    const loginModalRoot = document.getElementById('login-modal-root');
+    const loginBtn = document.getElementById('login-btn');
+    const userStatus = document.getElementById('user-status');
+
+
+    // >>>>>>> FUNCIÓN openLoginModal MEJORADA CON NUEVO DISEÑO <<<<<<<
+    function openLoginModal() {
+        const closeLabel = currentLang === 'es' ? 'Cerrar' : 'Close';
+        const googleDemo = currentLang === 'es' ? 'Demo: Integración con Google pendiente' : 'Demo: Google integration pending';
+        const facebookDemo = currentLang === 'es' ? 'Demo: Integración con Facebook pendiente' : 'Demo: Facebook integration pending';
+        loginModalRoot.innerHTML = `
+            <div class="modal-backdrop" role="dialog" aria-modal="true">
+                <div class="modal login-modal">
+                    <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+                        <button aria-label="${closeLabel}" id="close-login-modal" class='btn btn-ghost' style="border-radius:50%;padding:6px 10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center">✕</button>
+                    </div>
+                    <h3>${t('welcome')}</h3>
+                    <div class="subtitle">${t('loginSubtitle')}</div>
+                    
+                    <form id="login-form">
+                        <div class="login-form-group">
+                            <label for="login-email">${t('emailLabel')}</label>
+                            <input type="email" id="login-email" name="email" placeholder="${t('emailPlaceholder')}" required />
+                        </div>
+                        
+                        <div style="color:var(--muted);font-size:13px;margin-bottom:20px;text-align:center;line-height:1.5">
+                            ${t('magicLinkText')}
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" style="width:100%;padding:14px;font-size:16px;margin-bottom:16px">
+                            ${t('continueEmail')}
+                        </button>
+                        
+                        <div class="login-divider">
+                            <span>${t('orContinue')}</span>
+                        </div>
+                        
+                        <div class="login-social">
+                            <button type="button" onclick="customAlert('${googleDemo}')" style="display:flex;align-items:center;justify-content:center;gap:8px">
+                                <span>🔵</span> Google
+                            </button>
+                            <button type="button" onclick="customAlert('${facebookDemo}')" style="display:flex;align-items:center;justify-content:center;gap:8px">
+                                <span>🔵</span> Facebook
+                            </button>
+                        </div>
+                        
+                        <div style="text-align:center;margin-top:20px">
+                            <button type="button" id="cancel-login-modal" class="btn btn-ghost" style="font-size:14px">${t('cancel')}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+        document.getElementById('close-login-modal').onclick = closeLoginModal;
+        document.getElementById('cancel-login-modal').onclick = closeLoginModal;
+        
+        document.getElementById('login-form').onsubmit = async function(e) {
+            e.preventDefault();
+            const email = e.target.email.value.trim();
+            if (!email) {
+              const errorMsg = currentLang === 'es' ? 'Ingrese un correo electrónico' : 'Please enter an email address';
+              await customAlert(errorMsg);
+              return;
+            }
+
+            await ensureSupabaseReady();
+            const redirectTo = (window.AUTH_SITE_ORIGIN || window.location.origin) + window.location.pathname;
+            const { error } = await window.supabaseClient.auth.signInWithOtp({ 
+              email,
+              options: { emailRedirectTo: redirectTo }
+            });
+
+            if (error) {
+                console.error('Error enviando Magic Link:', error);
+                const errorMsg = currentLang === 'es' ? 'Error al enviar el enlace. Verifique su correo o la configuración de Supabase.' : 'Error sending link. Please check your email or Supabase configuration.';
+                await customAlert(errorMsg);
+            } else {
+                const successMsg = currentLang === 'es' 
+                  ? `✅ Enlace mágico enviado a ${email}. Revise su bandeja de entrada (y Spam).`
+                  : `✅ Magic link sent to ${email}. Check your inbox (and Spam).`;
+                await customAlert(successMsg);
+                closeLoginModal();
+            }
+        };
+    }
+    
+    function closeLoginModal() {
+        loginModalRoot.innerHTML = '';
+    }
+    
+    // --- LÓGICA DE ESTADO DE SESIÓN DE SUPABASE ---
+
+    async function renderAuthStatus() {
+      await ensureSupabaseReady();
+        // 1. Obtiene la sesión actual (o nula) de Supabase
+      const { data: { session }, error } = await window.supabaseClient.auth.getSession();
+        
+        if (session) {
+            const user = session.user;
+            // Usa la parte antes del @ como nombre
+            const displayName = user.email ? user.email.split('@')[0] : 'Usuario';
+            
+            // Muestra el estado de usuario
+            userStatus.innerHTML = `Bienvenido, <strong>${displayName}</strong> <button id='logout-btn' style='margin-left:8px' class='btn btn-ghost'>Cerrar sesión</button>`;
+            loginBtn.style.display = 'none';
+
+            // Configura el botón de cerrar sesión
+            document.getElementById('logout-btn').onclick = async () => {
+              await window.supabaseClient.auth.signOut();
+                // El onAuthStateChange actualizará la UI
+            };
+            
+        } else {
+            // No hay sesión activa (muestra el botón "Iniciar sesión")
+            userStatus.textContent = '';
+            loginBtn.style.display = '';
+        }
+        
+        closeLoginModal();
+    }
+
+    // 2. Escucha CUALQUIER cambio de estado (incluyendo el retorno del Magic Link)
+    ensureSupabaseReady().then(()=>{
+    window.supabaseClient.auth.onAuthStateChange((event, session) => {
+        // Al inicio, al iniciar sesión, o al cerrar sesión
+        if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'INITIAL_SESSION') {
+            renderAuthStatus();
+        }
+    });
+    });
+
+    // 3. Llama a la función al inicio para procesar tokens en la URL
+    ensureSupabaseReady().then(renderAuthStatus);
+
+    // REMOVIDO: loginBtn.addEventListener('click', openLoginModal);
+    // Ahora el botón tiene onclick="openLoginModal()" en el HTML.
+
+    /* ---------- Menú desplegable - Inicialización adicional ---------- */
+    function initMenu() {
+        const menuToggle = document.getElementById('menu-toggle');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+        
+        if (!menuToggle || !dropdownMenu) {
+            console.error('Elementos del menú no encontrados');
+            return;
+        }
+        
+        // Agregar event listener adicional (además del onclick)
+        menuToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            window.toggleMenuManual();
+        });
+        
+        // Cerrar menú al hacer clic fuera
+        document.addEventListener('click', (e) => {
+            if (!menuToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.classList.remove('active');
+            }
+        });
+        
+        // Cerrar menú al presionar Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && dropdownMenu.classList.contains('active')) {
+                dropdownMenu.classList.remove('active');
+            }
+        });
+        
+        console.log('Menú inicializado correctamente');
+    }
+    
+    // Inicializar el menú cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMenu);
+    } else {
+        initMenu();
+    }
+
+    // Abrir modal de login si se llega con #login
+    try {
+      if (location.hash === '#login' && typeof openLoginModal === 'function') {
+        setTimeout(() => openLoginModal(), 200);
+      }
+    } catch (e) {
+      console.warn('No se pudo abrir el modal de login automáticamente:', e);
+    }
+
+  </script>
+</body>
+</html>
+<script>
+
+
+  // ---------- FUNCIONES DE BASE DE DATOS ----------
+async function fetchTreatments() {
+  await ensureSupabaseReady();
+  const { data, error } = await window.supabaseClient.from('treatments').select('');
+  if (error) {
+    console.error('Error cargando tratamientos desde Supabase:', error);
+    return [];
+  }
+  return data;
+}
+
+async function fetchProfessionals() {
+  await ensureSupabaseReady();
+  const { data, error } = await window.supabaseClient.from('professionals').select('');
+  if (error) {
+    console.error('Error cargando profesionales desde Supabase:', error);
+    return [];
+  }
+  return data;
+}
+
+async function saveTurnDB(turn) {
+  await ensureSupabaseReady();
+  const { error } = await window.supabaseClient.from('turns').insert([turn]);
+  if (error) console.error('Error guardando turno:', error);
+}
+
+async function fetchTurns() {
+  await ensureSupabaseReady();
+  const { data, error } = await window.supabaseClient.from('turns').select('*');
+  if (error) {
+    console.error('Error cargando turnos:', error);
+    return [];
+  }
+  return data;
+}
+  
+  // ⭐️ FUNCIÓN INIT MEJORADA para carga asíncrona y respaldo local ⭐️
+  async function init() {
+    console.log("Iniciando carga de tratamientos y profesionales...");
+    
+    // 1. Cargar tratamientos (prioriza DB, usa local si falla/vacío)
+    let treatmentsData = [];
+    treatmentsData = await fetchTreatments();
+    
+    let finalTreatments = treatmentsData;
+    if (!finalTreatments || finalTreatments.length === 0) {
+        console.warn("La carga de tratamientos de Supabase falló o está vacía. Usando datos de muestra locales.");
+        finalTreatments = sampleTreatments;
+    }
+    renderTreatments(finalTreatments);
+    
+    // 2. Cargar profesionales (prioriza DB, usa local si falla/vacío)
+    let professionalsData = [];
+    professionalsData = await fetchProfessionals();
+    
+    let finalProfessionals = professionalsData;
+    if (!finalProfessionals || finalProfessionals.length === 0) {
+        console.warn("La carga de profesionales de Supabase falló o está vacía. Usando datos de muestra locales.");
+        finalProfessionals = professionals;
+    }
+    renderProfessionals(finalProfessionals);
+    
+    // 3. Renderizar turnos del usuario (si existen localmente)
+    renderNextTurns();
+
+    console.log("Carga inicial completada.");
+  }
+  
+  // ⭐️ LLAMADA FINAL: Ejecutar init SOLO después de que el DOM esté listo ⭐️
+  document.addEventListener('DOMContentLoaded', () => {
+    init();
+  });
+</script>

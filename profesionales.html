@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Clínica Moguz — Profesionales</title>
+  <meta name="description" content="Profesionales de Clínica Moguz." />
+  <link rel="stylesheet" href="assets/styles.css" />
+  <style>
+    :root{--bg:#f8f9fa;--card:#ffffff;--text:#212529;--muted:#adb5bd;--accent:rgba(129,212,250,0.5);--accent-600:rgba(41,182,246,0.6);--glass: rgba(255,255,255,0.9);--radius-lg:16px;--radius-md:10px;--shadow-color: rgba(0,0,0,0.05);--border-color: rgba(0,0,0,0.1)}
+    [data-theme="dark"]{--bg:#121a24;--card:#1c2733;--text:#e3eaf1;--muted:#95a4b8;--accent:rgba(129,212,250,0.5);--accent-600:rgba(41,182,246,0.6);--glass: rgba(255,255,255,0.08);--shadow-color: rgba(0,0,0,0.5);--border-color: rgba(255,255,255,0.1)}
+    *{box-sizing:border-box}html,body{height:100%}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;color:var(--text);background:var(--bg)}
+    body[data-theme="light"]{background:linear-gradient(180deg,var(--bg),#e6eef8)}
+    h1,h2,h3{font-family:'Helvetica Neue',Arial,sans-serif;font-weight:700;letter-spacing:-.01em;color:var(--accent-600)}
+    .container{max-width:1100px;margin:0 auto;padding:20px}
+    header{position:fixed;left:0;right:0;top:0;z-index:40;background:var(--card);backdrop-filter:blur(10px);border-bottom:1px solid var(--border-color);padding-left:70px}
+    header::before{content:'';position:absolute;left:0;top:0;width:70px;height:100%;pointer-events:none;z-index:-1}
+    .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px}
+    #lang-select{padding:8px 32px 8px 12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--card);color:var(--text);font-weight:600;font-size:14px;cursor:pointer;transition:all .2s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236c757d' d='M6 9L1 4h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;min-width:60px}
+    [data-theme="dark"] #lang-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2395a4b8' d='M6 9L1 4h10z'/%3E%3C/svg%3E")}
+    #lang-select:hover{border-color:var(--accent);background-color:var(--glass);transform:translateY(-1px);box-shadow:0 2px 8px var(--shadow-color)}
+    #lang-select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(129,212,250,.25)}
+    #toggle-theme{width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--card);color:var(--text);font-size:16px!important;cursor:pointer;display:inline-flex!important;align-items:center!important;justify-content:center!important;padding:0!important;margin:0!important;line-height:1!important;vertical-align:middle!important;text-align:center!important;position:relative!important;transition:all .2s ease}
+    #toggle-theme span{display:inline-block!important;line-height:1!important;position:absolute!important;top:50%!important;left:50%!important;transform:translate(-50%,-50%)!important;margin:0!important;padding:0!important}
+    #toggle-theme:hover{background:var(--accent);color:var(--text);border-color:var(--accent);transform:translateY(-1px) scale(1.05);box-shadow:0 4px 12px rgba(129,212,250,.3)}
+    [data-theme="dark"] #toggle-theme:hover{color:white}
+    #toggle-theme:active{transform:translateY(0) scale(.98)}
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
+    .brand .logo{width:44px;height:44px;border-radius:var(--radius-md);background:linear-gradient(135deg,var(--accent),var(--accent-600));display:flex;align-items:center;justify-content:center;color:var(--text);font-weight:700}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:24px}
+    .card{background:var(--card);border-radius:var(--radius-md);padding:18px;box-shadow:0 6px 18px var(--shadow-color)}
+    footer{margin-top:40px;padding:30px 24px;border-top:1px solid var(--border-color);color:var(--muted)}
+    .menu-toggle{position:fixed;top:12px;left:12px;z-index:100 !important;width:48px;height:48px;border-radius:var(--radius-md);background:var(--card);border:1px solid var(--border-color);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px var(--shadow-color)}
+    .dropdown-menu{position:fixed;top:70px;left:12px;z-index:99 !important;background:#ffffff;border-radius:var(--radius-lg);padding:12px 0;min-width:220px;box-shadow:0 8px 24px rgba(0,0,0,0.3);border:2px solid rgba(0,0,0,0.1);display:none}
+    [data-theme="dark"] .dropdown-menu{background:#1c2733;border-color:rgba(255,255,255,0.2)}
+    .dropdown-menu.active{display:block}
+    .dropdown-menu a{display:block;padding:12px 20px;color:var(--text);text-decoration:none;border-left:3px solid transparent}
+    .dropdown-menu a:hover{background:var(--glass);border-left-color:var(--accent);color:var(--accent)}
+    main{padding-top:120px}
+
+    /* Filtro: mostrar solo sección Profesionales */
+    main > section{display:none !important}
+    main > section#profesionales{display:block !important}
+    
+    /* ---------- Chatbot bubble ---------- */
+    .chat-bubble{position:fixed;right:18px;bottom:18px;width:64px;height:64px;border-radius:999px;background:linear-gradient(135deg,#29b6f6,#0288d1);
+      display:flex;align-items:center;justify-content:center;color:white;box-shadow:0 8px 30px rgba(0,0,0,0.3);cursor:pointer;z-index:80;font-size:28px}
+    .chat-bubble:hover{transform:scale(1.1);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
+    .chat-window{position:fixed;right:18px;bottom:94px;width:380px;background:linear-gradient(135deg,#e3f2fd,#bbdefb);border-radius:var(--radius-lg);padding:20px;box-shadow:0 12px 40px rgba(0,0,0,0.25);z-index:80;border:2px solid #90caf9}
+    [data-theme="dark"] .chat-window {
+      background:linear-gradient(135deg,#1565c0,#0d47a1);
+      border-color:#1976d2;
+    }
+    .chat-window header{display:flex;align-items:center;justify-content:space-between}
+    .quick-buttons{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+    .quick-buttons button{padding:8px 12px;border-radius:var(--radius-md);border:1px solid #64b5f6;background:white;color:#1976d2;font-size:13px;font-weight:600;flex:1;min-width:calc(50% - 4px)}
+    .quick-buttons button:hover{background:#1976d2;color:white;transform:translateY(-1px)}
+    .chat-log{max-height:300px;overflow:auto;margin:12px 0;padding:12px;border-radius:var(--radius-md);background:white;border:1px solid #90caf9}
+    [data-theme="dark"] .chat-log{background:#0d47a1;border-color:#1976d2}
+    .msg{margin:8px 0;padding:10px 12px;border-radius:12px;display:flex;align-items:start;gap:10px;max-width:90%;clear:both}
+    .msg.user{background:#1976d2;color:white;margin-left:auto;flex-direction:row-reverse;border-bottom-right-radius:4px}
+    .msg.bot{background:#f5f5f5;color:#1f2937;float:left;border-bottom-left-radius:4px}
+    [data-theme="dark"] .msg.bot{background:#1e3a5f;color:#e3eaf1}
+    .msg.bot::before{content:'🤖';font-size:20px;flex-shrink:0}
+    .chat-log .msg.user{align-self:flex-end;background:#1976d2;color:white;border-bottom-right-radius:4px}
+    .chat-log .msg.bot{align-self:flex-start;background:white;color:#1565c0;border-bottom-left-radius:4px;box-shadow:0 2px 4px rgba(0,0,0,.1)}
+    .chat-log .msg.bot::before{content:'🤖 ';font-size:16px}
+    .quick-buttons{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+    .quick-buttons button{padding:6px 12px;border-radius:16px;border:1px solid #90caf9;background:white;color:#1976d2;font-size:12px;cursor:pointer;transition:all .2s;font-weight:600}
+    .quick-buttons button:hover{background:#e3f2fd;transform:translateY(-1px)}
+    @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body data-theme="light">
+  <button class="menu-toggle" id="menu-toggle" aria-label="Menú de navegación" onclick="window.toggleMenuManual && window.toggleMenuManual(); return false;"> <span>☰</span> </button>
+  <div class="dropdown-menu" id="dropdown-menu">
+    <a href="index.html">📊 Dashboard</a>
+    <a href="tratamientos.html">💉 Tratamientos</a>
+    <a href="profesionales.html">👨‍⚕️ Profesionales</a>
+    <a href="turnos.html">📅 Turnos</a>
+    <a href="contacto.html">📞 Contacto</a>
+  </div>
+    <a href="tratamientos.html">💉 Tratamientos</a>
+    <a href="profesionales.html">👨‍⚕️ Profesionales</a>
+    <a href="turnos.html">📅 Turnos</a>
+    <a href="contacto.html">📞 Contacto</a>
+  </div>
+
+  <header>
+    <div class="nav-inner container">
+      <a href="#" class="brand" id="brand-link">
+        <div class="logo-icon"><img src="https://cdn-icons-png.flaticon.com/512/3873/3873441.png" style="width:28px;height:28px;"></div>
+        <div>
+          <div style="font-weight:800">Clínica Moguz</div>
+          <div style="font-size:12px;color:var(--muted)" data-i18n="brandSubtitle">Cirugía plástica • Reconstructiva • Estética</div>
+        </div>
+      </a>
+      <div class="nav-actions">
+        <select id="lang-select" aria-label="Seleccionar idioma"><option value="es">ES</option><option value="en">EN</option></select>
+        <button id="toggle-theme" title="Modo oscuro"><span>🌓</span></button>
+        <button id="login-btn" class="btn btn-ghost">Iniciar sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" id="home">
+    <section id="profesionales">
+      <h2 data-i18n="professionals">Profesionales</h2>
+      <p style="color:var(--muted);font-size:16px;line-height:1.6;margin-bottom:32px" data-i18n="profIntro">Contamos con un equipo de especialistas certificados con años de experiencia en cirugía plástica y estética. Cada profesional está comprometido con la excelencia médica y el bienestar de nuestros pacientes.</p>
+      
+      <div class="grid" id="professionals-grid">
+        <div class="card">
+          <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=400&h=400&fit=crop&auto=format" alt="Dra. Ana Moguz" style="width:120px;height:120px;border-radius:50%;margin:0 auto 16px;object-fit:cover;border:3px solid var(--accent)" />
+          <h3>Dra. Ana Moguz</h3>
+          <div style="color:var(--accent-600);font-weight:600;margin-bottom:12px" data-i18n="prof1Spec">Cirugía Plástica</div>
+          <p style="margin:8px 0;font-size:14px;line-height:1.6;color:var(--muted)" data-i18n="prof1Bio">Matrícula 12345. 15 años de experiencia.</p>
+          
+          <div style="margin-top:16px;padding:12px;background:var(--glass);border-radius:8px;text-align:left;font-size:13px">
+            <div style="margin-bottom:8px"><strong style="color:var(--accent-600)" data-i18n="education">Formación:</strong> Universidad de Buenos Aires (UBA)</div>
+            <div style="margin-bottom:8px"><strong style="color:var(--accent-600)" data-i18n="specialization">Especialización:</strong> Hospital Italiano</div>
+            <div style="margin-bottom:8px"><strong style="color:var(--accent-600)" data-i18n="certifications">Certificaciones:</strong> SACPER, ISAPS</div>
+            <div><strong style="color:var(--accent-600)" data-i18n="experience">Experiencia:</strong> +15 años, +2000 cirugías</div>
+          </div>
+          
+          <div style="margin-top:16px;padding:12px;background:linear-gradient(135deg,var(--accent-200),var(--accent-300));border-radius:8px;font-size:13px;font-style:italic;color:#1a3a52" data-i18n="quote1">
+            "Mi compromiso es lograr resultados naturales que realcen la belleza única de cada paciente."
+          </div>
+          
+          <div style="text-align:right;margin-top:16px"><a class='btn btn-primary' href='turnos.html' data-i18n="book">Sacar turno</a></div>
+        </div>
+        
+        <div class="card">
+          <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=400&h=400&fit=crop&auto=format" alt="Dr. Luis Pérez" style="width:120px;height:120px;border-radius:50%;margin:0 auto 16px;object-fit:cover;border:3px solid var(--accent)" />
+          <h3>Dr. Luis Pérez</h3>
+          <div style="color:var(--accent-600);font-weight:600;margin-bottom:12px" data-i18n="prof2Spec">Cirugía Reconstructiva</div>
+          <p style="margin:8px 0;font-size:14px;line-height:1.6;color:var(--muted)" data-i18n="prof2Bio">Especialista en reconstrucción post-trauma.</p>
+          
+          <div style="margin-top:16px;padding:12px;background:var(--glass);border-radius:8px;text-align:left;font-size:13px">
+            <div style="margin-bottom:8px"><strong style="color:var(--accent-600)" data-i18n="education">Formación:</strong> Universidad Nacional de Córdoba</div>
+            <div style="margin-bottom:8px"><strong style="color:var(--accent-600)" data-i18n="specialization">Especialización:</strong> Hospital de Clínicas</div>
+            <div style="margin-bottom:8px"><strong style="color:var(--accent-600)" data-i18n="certifications">Certificaciones:</strong> SACPER, ASPS</div>
+            <div><strong style="color:var(--accent-600)" data-i18n="experience">Experiencia:</strong> +12 años, +1500 cirugías</div>
+          </div>
+          
+          <div style="margin-top:16px;padding:12px;background:linear-gradient(135deg,var(--accent-200),var(--accent-300));border-radius:8px;font-size:13px;font-style:italic;color:#1a3a52" data-i18n="quote2">
+            "Cada cirugía es única. Mi enfoque personalizado garantiza resultados excepcionales."
+          </div>
+          
+          <div style="text-align:right;margin-top:16px"><a class='btn btn-primary' href='turnos.html' data-i18n="book">Sacar turno</a></div>
+        </div>
+        
+        <div class="card">
+          <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?q=80&w=400&h=400&fit=crop&auto=format" alt="Dr. Mario Morales Guzman" style="width:120px;height:120px;border-radius:50%;margin:0 auto 16px;object-fit:cover;border:3px solid var(--accent)" />
+          <h3>Dr. Mario Morales Guzman</h3>
+          <div style="color:var(--accent-600);font-weight:600;margin-bottom:12px" data-i18n="prof3Spec">Estética</div>
+          <p style="margin:8px 0;font-size:14px;line-height:1.6;color:var(--muted)" data-i18n="prof3Bio">Tratamientos mínimamente invasivos.</p>
+          
+          <div style="margin-top:16px;padding:12px;background:var(--glass);border-radius:8px;text-align:left;font-size:13px">
+            <div style="margin-bottom:8px"><strong style="color:var(--accent-600)" data-i18n="education">Formación:</strong> Universidad de La Plata (UNLP)</div>
+            <div style="margin-bottom:8px"><strong style="color:var(--accent-600)" data-i18n="specialization">Especialización:</strong> Medicina Estética (UCES)</div>
+            <div style="margin-bottom:8px"><strong style="color:var(--accent-600)" data-i18n="certifications">Certificaciones:</strong> SAEME, FINAME</div>
+            <div><strong style="color:var(--accent-600)" data-i18n="experience">Experiencia:</strong> +10 años, +5000 tratamientos</div>
+          </div>
+          
+          <div style="margin-top:16px;padding:12px;background:linear-gradient(135deg,var(--accent-200),var(--accent-300));border-radius:8px;font-size:13px;font-style:italic;color:#1a3a52" data-i18n="quote3">
+            "La belleza no tiene edad. Mi objetivo es que cada paciente se sienta seguro y radiante."
+          </div>
+          
+          <div style="text-align:right;margin-top:16px"><a class='btn btn-primary' href='turnos.html' data-i18n="book">Sacar turno</a></div>
+        </div>
+      </div>
+
+      <div style="margin-top:48px;padding:32px;background:var(--card);border-radius:var(--radius-lg);box-shadow:0 4px 12px var(--shadow-color)">
+        <h3 style="margin-top:0;color:var(--accent-600)" data-i18n="excellenceCommitment">Nuestro compromiso con la excelencia</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px;margin-top:24px">
+          <div>
+            <div style="font-size:32px;color:var(--accent);margin-bottom:8px">🏆</div>
+            <h4 style="margin:0 0 8px 0" data-i18n="intlCertifications">Certificaciones internacionales</h4>
+            <p style="color:var(--muted);font-size:14px;margin:0" data-i18n="intlCertificationsDesc">Nuestro equipo cuenta con certificaciones de las principales sociedades médicas del mundo.</p>
+          </div>
+          <div>
+            <div style="font-size:32px;color:var(--accent);margin-bottom:8px">🔬</div>
+            <h4 style="margin:0 0 8px 0" data-i18n="cuttingEdgeTech">Tecnología de vanguardia</h4>
+            <p style="color:var(--muted);font-size:14px;margin:0" data-i18n="cuttingEdgeTechDesc">Equipamiento de última generación para procedimientos seguros y efectivos.</p>
+          </div>
+          <div>
+            <div style="font-size:32px;color:var(--accent);margin-bottom:8px">❤️</div>
+            <h4 style="margin:0 0 8px 0" data-i18n="personalizedCare">Atención personalizada</h4>
+            <p style="color:var(--muted);font-size:14px;margin:0" data-i18n="personalizedCareDesc">Seguimiento integral desde la primera consulta hasta la recuperación completa.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div style="display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap"> 
+      <div>
+        <strong>Clínica Moguz</strong>
+        <div style="color:var(--muted);font-size:13px;margin-top:6px">Dirección • Teléfono • Email</div>
+      </div>
+      <div style="color:var(--muted)" data-i18n="footerQuickLinks">Enlaces rápidos: Turnos • Tratamientos • Contacto</div>
+      <div style="color:var(--muted)" data-i18n="footerPolicies">Políticas: Privacidad • T&C</div>
+    </div>
+  </footer>
+
+  <script>
+    (function(){const menuToggle=document.getElementById('menu-toggle');const dropdownMenu=document.getElementById('dropdown-menu');if(menuToggle&&dropdownMenu){menuToggle.onclick=function(){dropdownMenu.style.display=dropdownMenu.style.display==='block'?'none':'block'};document.onclick=function(e){if(!menuToggle.contains(e.target)&&!dropdownMenu.contains(e.target)){dropdownMenu.style.display='none'}}}})();
+  </script>
+  
+  <div id="login-modal-root"></div>
+  <div id="chat-root"></div>
+  <script>
+    if(window.initChatbot) window.initChatbot();
+  </script>
+  
+  <script src="assets/i18n.js"></script>
+  <script src="assets/common.js"></script>
+  <script src="assets/auth.js"></script>
+</body>
+</html>

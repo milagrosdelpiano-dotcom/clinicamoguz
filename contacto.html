@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Clínica Moguz — Contacto</title>
+  <meta name="description" content="Contacto de Clínica Moguz." />
+  <link rel="stylesheet" href="assets/styles.css" />
+  <style>
+    :root{--bg:#f8f9fa;--card:#ffffff;--text:#212529;--muted:#adb5bd;--accent:rgba(129,212,250,0.5);--accent-600:rgba(41,182,246,0.6);--glass: rgba(255,255,255,0.9);--radius-lg:16px;--radius-md:10px;--shadow-color: rgba(0,0,0,0.05);--border-color: rgba(0,0,0,0.1)}
+    [data-theme="dark"]{--bg:#121a24;--card:#1c2733;--text:#e3eaf1;--muted:#95a4b8;--accent:rgba(129,212,250,0.5);--accent-600:rgba(41,182,246,0.6);--glass: rgba(255,255,255,0.08);--shadow-color: rgba(0,0,0,0.5);--border-color: rgba(255,255,255,0.1)}
+    *{box-sizing:border-box}html,body{height:100%}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;color:var(--text);background:var(--bg)}
+    body[data-theme="light"]{background:linear-gradient(180deg,var(--bg),#e6eef8)}
+    h1,h2,h3{font-family:'Helvetica Neue',Arial,sans-serif;font-weight:700;letter-spacing:-.01em;color:var(--accent-600)}
+    .container{max-width:1100px;margin:0 auto;padding:20px}
+    header{position:fixed;left:0;right:0;top:0;z-index:40;background:var(--card);backdrop-filter:blur(10px);border-bottom:1px solid var(--border-color);padding-left:70px}
+    header::before{content:'';position:absolute;left:0;top:0;width:70px;height:100%;pointer-events:none;z-index:-1}
+    .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px}
+    #toggle-theme{width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--card);color:var(--text);font-size:16px!important;cursor:pointer;display:inline-flex!important;align-items:center!important;justify-content:center!important;padding:0!important;margin:0!important;line-height:1!important;vertical-align:middle!important;text-align:center!important;position:relative!important}
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
+    .brand .logo{width:44px;height:44px;border-radius:var(--radius-md);background:linear-gradient(135deg,var(--accent),var(--accent-600));display:flex;align-items:center;justify-content:center;color:var(--text);font-weight:700}
+    .menu-toggle{position:fixed;top:12px;left:12px;z-index:100 !important;width:48px;height:48px;border-radius:var(--radius-md);background:var(--card);border:1px solid var(--border-color);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px var(--shadow-color)}
+    .dropdown-menu{position:fixed;top:70px;left:12px;z-index:99 !important;background:#ffffff;border-radius:var(--radius-lg);padding:12px 0;min-width:220px;box-shadow:0 8px 24px rgba(0,0,0,0.3);border:2px solid rgba(0,0,0,0.1);display:none}
+    [data-theme="dark"] .dropdown-menu{background:#1c2733;border-color:rgba(255,255,255,0.2)}
+    .dropdown-menu.active{display:block}
+    .dropdown-menu a{display:block;padding:12px 20px;color:var(--text);text-decoration:none;border-left:3px solid transparent}
+    .dropdown-menu a:hover{background:var(--glass);border-left-color:var(--accent);color:var(--accent)}
+    .card{background:var(--card);border-radius:var(--radius-md);padding:18px;box-shadow:0 6px 18px var(--shadow-color)}
+    input,textarea{width:100%;padding:12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--card);color:var(--text)}
+    footer{margin-top:40px;padding:30px 24px;border-top:1px solid var(--border-color);color:var(--muted)}
+    main{padding-top:120px}
+
+    /* Filtro: mostrar solo sección Contacto */
+    main > section{display:none !important}
+    main > section#contacto{display:block !important}
+    
+    /* ---------- Chatbot bubble ---------- */
+    .chat-bubble{position:fixed;right:18px;bottom:18px;width:64px;height:64px;border-radius:999px;background:linear-gradient(135deg,#29b6f6,#0288d1);
+      display:flex;align-items:center;justify-content:center;color:white;box-shadow:0 8px 30px rgba(0,0,0,0.3);cursor:pointer;z-index:80;font-size:28px}
+    .chat-bubble:hover{transform:scale(1.1);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
+    .chat-window{position:fixed;right:18px;bottom:94px;width:380px;background:linear-gradient(135deg,#e3f2fd,#bbdefb);border-radius:var(--radius-lg);padding:20px;box-shadow:0 12px 40px rgba(0,0,0,0.25);z-index:80;border:2px solid #90caf9}
+    [data-theme="dark"] .chat-window {
+      background:linear-gradient(135deg,#1565c0,#0d47a1);
+      border-color:#1976d2;
+    }
+    .chat-window header{display:flex;align-items:center;justify-content:space-between}
+    .quick-buttons{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+    .quick-buttons button{padding:8px 12px;border-radius:var(--radius-md);border:1px solid #64b5f6;background:white;color:#1976d2;font-size:13px;font-weight:600;flex:1;min-width:calc(50% - 4px)}
+    .quick-buttons button:hover{background:#1976d2;color:white;transform:translateY(-1px)}
+    .chat-log{max-height:300px;overflow:auto;margin:12px 0;padding:12px;border-radius:var(--radius-md);background:white;border:1px solid #90caf9}
+    [data-theme="dark"] .chat-log{background:#0d47a1;border-color:#1976d2}
+    .msg{margin:8px 0;padding:10px 12px;border-radius:12px;display:flex;align-items:start;gap:10px;max-width:90%;clear:both}
+    .msg.user{background:#1976d2;color:white;margin-left:auto;flex-direction:row-reverse;border-bottom-right-radius:4px}
+    .msg.bot{background:#f5f5f5;color:#1f2937;float:left;border-bottom-left-radius:4px}
+    [data-theme="dark"] .msg.bot{background:#1e3a5f;color:#e3eaf1}
+    .msg.bot::before{content:'🤖';font-size:20px;flex-shrink:0}
+  </style>
+</head>
+<body data-theme="light">
+  <button class="menu-toggle" id="menu-toggle" aria-label="Menú de navegación" onclick="window.toggleMenuManual && window.toggleMenuManual(); return false;"> <span>☰</span> </button>
+  <div class="dropdown-menu" id="dropdown-menu">
+    <a href="index.html">📊 Dashboard</a>
+    <a href="tratamientos.html">💉 Tratamientos</a>
+    <a href="profesionales.html">👨‍⚕️ Profesionales</a>
+    <a href="turnos.html">📅 Turnos</a>
+    <a href="contacto.html">📞 Contacto</a>
+  </div>
+    <a href="tratamientos.html">💉 Tratamientos</a>
+    <a href="profesionales.html">👨‍⚕️ Profesionales</a>
+    <a href="turnos.html">📅 Turnos</a>
+    <a href="contacto.html">📞 Contacto</a>
+  </div>
+
+  <header>
+    <div class="nav-inner container">
+      <a href="#" class="brand" id="brand-link">
+        <div class="logo-icon"><img src="https://cdn-icons-png.flaticon.com/512/3873/3873441.png" style="width:28px;height:28px;"></div>
+        <div>
+          <div style="font-weight:800">Clínica Moguz</div>
+          <div style="font-size:12px;color:var(--muted)" data-i18n="brandSubtitle">Cirugía plástica • Reconstructiva • Estética</div>
+        </div>
+      </a>
+      <div class="nav-actions">
+        <select id="lang-select" aria-label="Seleccionar idioma"><option value="es">ES</option><option value="en">EN</option></select>
+        <button id="toggle-theme" title="Modo oscuro">🌓</button>
+        <button id="login-btn" class="btn btn-ghost">Iniciar sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" id="home">
+    <section id="contacto">
+      <h2 data-i18n="contact">Contacto</h2>
+      <p style="color:var(--muted);font-size:16px;line-height:1.6;margin-bottom:24px" data-i18n="contactIntro">Estamos para ayudarte. Comunicate con nosotros por cualquiera de estos medios y te responderemos a la brevedad.</p>
+      
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px">
+        <div class="card">
+          <h3 style="margin-top:0;color:var(--accent-600)" data-i18n="visitUs">📍 Visitanos</h3>
+          <p style="margin:8px 0"><strong data-i18n="address">Dirección</strong>: España 1115, Corrientes</p>
+          <p style="color:var(--muted);font-size:14px;margin:8px 0" data-i18n="addressDetails">Planta Baja - Frente a Plaza Juan de Vera</p>
+          <p style="color:var(--muted);font-size:14px;margin:8px 0" data-i18n="accessibility">Accesibilidad para personas con movilidad reducida</p>
+          <p style="margin:8px 0"><strong data-i18n="hours">Horarios</strong>: Lun-Mier 8:00 - 20:00</p>
+          <p style="color:var(--muted);font-size:14px;margin:8px 0" data-i18n="scheduleRequired">Consultas con turno previo</p>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0;color:var(--accent-600)" data-i18n="contactUs">📞 Contactanos</h3>
+          <p style="margin:8px 0"><strong data-i18n="phone">Teléfono</strong>: (+54) 9 11 5754-2448</p>
+          <p style="color:var(--muted);font-size:14px;margin:8px 0" data-i18n="whatsappAvailable">WhatsApp disponible para consultas rápidas</p>
+          <p style="margin:8px 0"><strong>Email</strong>: info@clinicamoguz.com.ar</p>
+          <p style="margin:8px 0"><strong>Instagram</strong>: @moguz6040</p>
+          <p style="color:var(--muted);font-size:14px;margin:8px 0" data-i18n="followInstagram">Seguinos para ver casos reales y novedades</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:32px">
+        <h3 style="margin-top:0;color:var(--accent-600)" data-i18n="howToArrive">🗺️ Cómo llegar</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div>
+            <h4 style="margin:0 0 8px 0" data-i18n="byCar">🚗 En auto</h4>
+            <p style="color:var(--muted);font-size:14px;margin:0" data-i18n="freeParking">Estacionamiento gratuito en la zona. Acceso directo por Av. España.</p>
+          </div>
+          <div>
+            <h4 style="margin:0 0 8px 0" data-i18n="byPublicTransport">🚌 En transporte público</h4>
+            <p style="color:var(--muted);font-size:14px;margin:0" data-i18n="busLines">Líneas: 103, 105, 107. Parada España y San Martín.</p>
+          </div>
+        </div>
+        <div style="margin-top:16px;height:240px;background:var(--glass);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:var(--muted)">
+          <div style="text-align:center">
+            <div style="font-size:48px;margin-bottom:8px">📍</div>
+            <div data-i18n="interactiveMapSoon">Mapa interactivo próximamente</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="background:linear-gradient(135deg,var(--accent),var(--accent-600));color:white">
+        <h3 style="margin-top:0" data-i18n="sendYourInquiry">📝 Envianos tu consulta</h3>
+        <p style="margin-bottom:20px;opacity:0.95" data-i18n="replyIn24">Completá el formulario y te responderemos en menos de 24 horas</p>
+        
+        <form id="contact-form">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+            <input name="name" id="contact-name" placeholder="Nombre completo" data-i18n="fullName" required style="padding:12px;border-radius:var(--radius-md);border:none;background:rgba(255,255,255,0.95)" />
+            <input name="email" id="contact-email" placeholder="Email" data-i18n="emailPlaceholder" type="email" required style="padding:12px;border-radius:var(--radius-md);border:none;background:rgba(255,255,255,0.95)" />
+          </div>
+          <input name="phone" id="contact-phone" placeholder="Teléfono (opcional)" data-i18n="phoneOptional" style="width:100%;padding:12px;border-radius:var(--radius-md);border:none;background:rgba(255,255,255,0.95);margin-bottom:12px" />
+          <textarea name="msg" id="contact-msg" rows="4" placeholder="Escribí tu consulta aquí..." data-i18n="writeInquiry" required style="width:100%;padding:12px;border-radius:var(--radius-md);border:none;background:rgba(255,255,255,0.95);margin-bottom:12px"></textarea>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <p style="margin:0;font-size:13px;opacity:0.9" data-i18n="replyShortly">Te responderemos a la brevedad</p>
+            <button class="btn" type="submit" id="contact-submit" data-i18n="sendQuery" style="background:white;color:var(--accent-600);font-weight:600">Enviar consulta</button>
+          </div>
+        </form>
+      </div>
+
+      <div style="margin-top:32px;padding:24px;background:var(--card);border-radius:var(--radius-lg);box-shadow:0 4px 12px var(--shadow-color)">
+        <h3 style="margin-top:0;color:var(--accent-600)" data-i18n="faq">❓ Preguntas frecuentes</h3>
+        <div style="display:grid;gap:16px">
+          <div>
+            <h4 style="margin:0 0 8px 0" data-i18n="faqQ1">¿Necesito turno para una consulta?</h4>
+            <p style="color:var(--muted);font-size:14px;margin:0" data-i18n="faqA1">Sí, trabajamos únicamente con sistema de turnos para garantizar la mejor atención personalizada.</p>
+          </div>
+          <div>
+            <h4 style="margin:0 0 8px 0" data-i18n="faqQ2">¿Atienden obras sociales?</h4>
+            <p style="color:var(--muted);font-size:14px;margin:0" data-i18n="faqA2">Trabajamos con las principales obras sociales y prepagas. Consultá disponibilidad.</p>
+          </div>
+          <div>
+            <h4 style="margin:0 0 8px 0" data-i18n="faqQ3">¿Hacen consultas virtuales?</h4>
+            <p style="color:var(--muted);font-size:14px;margin:0" data-i18n="faqA3">Sí, ofrecemos videoconsultas para evaluaciones preliminares y seguimientos post-operatorios.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div style="display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap"> 
+      <div>
+        <strong>Clínica Moguz</strong>
+        <div style="color:var(--muted);font-size:13px;margin-top:6px">Dirección • Teléfono • Email</div>
+      </div>
+      <div style="color:var(--muted)" data-i18n="footerQuickLinks">Enlaces rápidos: Turnos • Tratamientos • Contacto</div>
+      <div style="color:var(--muted)" data-i18n="footerPolicies">Políticas: Privacidad • T&C</div>
+    </div>
+  </footer>
+
+  <script>
+(function(){const menuToggle=document.getElementById('menu-toggle');const dropdownMenu=document.getElementById('dropdown-menu');if(menuToggle&&dropdownMenu){menuToggle.onclick=function(){dropdownMenu.style.display=dropdownMenu.style.display==='block'?'none':'block'};document.onclick=function(e){if(!menuToggle.contains(e.target)&&!dropdownMenu.contains(e.target)){dropdownMenu.style.display='none'}}}})();
+    document.getElementById('contact-form').addEventListener('submit',function(e){e.preventDefault(); alert(window.i18nT('contactSent')); this.reset();});
+  </script>
+  
+  <div id="login-modal-root"></div>
+  <div id="chat-root"></div>
+  <script>
+    if(window.initChatbot) window.initChatbot();
+  </script>
+  
+  <script src="assets/i18n.js"></script>
+  <script src="assets/common.js"></script>
+  <script src="assets/auth.js"></script>
+</body>
+</html>
