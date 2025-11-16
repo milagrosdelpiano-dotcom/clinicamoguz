@@ -28,11 +28,7 @@
     .card{background:var(--card);border-radius:var(--radius-md);padding:18px;box-shadow:0 6px 18px var(--shadow-color)}
     input,textarea{width:100%;padding:12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--card);color:var(--text)}
     footer{margin-top:40px;padding:30px 24px;border-top:1px solid var(--border-color);color:var(--muted)}
-    main{padding-top:120px}
-
-    /* Filtro: mostrar solo sección Contacto */
-    main > section{display:none !important}
-    main > section#contacto{display:block !important}
+    main{padding-top:72px!important}
     
     /* ---------- Chatbot bubble ---------- */
     .chat-bubble{position:fixed;right:18px;bottom:18px;width:64px;height:64px;border-radius:999px;background:linear-gradient(135deg,#29b6f6,#0288d1);
@@ -40,13 +36,15 @@
     .chat-bubble:hover{transform:scale(1.1);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
     .chat-window{position:fixed;right:18px;bottom:94px;width:380px;background:linear-gradient(135deg,#e3f2fd,#bbdefb);border-radius:var(--radius-lg);padding:20px;box-shadow:0 12px 40px rgba(0,0,0,0.25);z-index:80;border:2px solid #90caf9}
     [data-theme="dark"] .chat-window {
-      background:linear-gradient(135deg,#1565c0,#0d47a1);
-      border-color:#1976d2;
+      background:linear-gradient(135deg,#263238,#37474f);
+      border-color:#546e7a;
     }
     .chat-window header{display:flex;align-items:center;justify-content:space-between}
     .quick-buttons{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
     .quick-buttons button{padding:8px 12px;border-radius:var(--radius-md);border:1px solid #64b5f6;background:white;color:#1976d2;font-size:13px;font-weight:600;flex:1;min-width:calc(50% - 4px)}
     .quick-buttons button:hover{background:#1976d2;color:white;transform:translateY(-1px)}
+    [data-theme="dark"] .quick-buttons button{background:#1e3a5f;color:#90caf9;border-color:#1976d2}
+    [data-theme="dark"] .quick-buttons button:hover{background:#1565c0;color:white}
     .chat-log{max-height:300px;overflow:auto;margin:12px 0;padding:12px;border-radius:var(--radius-md);background:white;border:1px solid #90caf9}
     [data-theme="dark"] .chat-log{background:#0d47a1;border-color:#1976d2}
     .msg{margin:8px 0;padding:10px 12px;border-radius:12px;display:flex;align-items:start;gap:10px;max-width:90%;clear:both}

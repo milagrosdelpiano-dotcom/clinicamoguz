@@ -257,7 +257,7 @@
               <span style="font-size:24px">🤖</span>
               <strong style="font-size:16px;color:#1565c0">${t('chatBotName')}</strong>
             </div>
-            <button id="close-chat" class='btn btn-ghost' style='border-radius:50%;width:32px;height:32px;min-width:32px;display:flex;align-items:center;justify-content:center;padding:0;font-size:18px;margin:-6px -6px 0 0;background:white;border:1px solid #90caf9'>✕</button>
+            <button id="close-chat" style='border-radius:50%;width:32px;height:32px;min-width:32px;display:flex;align-items:center;justify-content:center;padding:0;font-size:18px;margin:-6px -6px 0 0;background:rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.1);color:#424242'>✕</button>
           </div>
           <div class="chat-log" id="chat-log"><div class="msg bot">${t('chatGreeting')}</div></div>
           <div class="quick-buttons">
@@ -324,8 +324,8 @@
   // Auto-inicializar en páginas simples (no en index.html que tiene su propio init)
   document.addEventListener('DOMContentLoaded', () => {
     applyI18n();
-    // Solo inicializar chatbot si no estamos en index.html (que tiene su propia lógica init)
-    if(document.getElementById('chat-root') && !document.getElementById('turnos')) {
+    // Solo inicializar chatbot si no estamos en index.html (detectado por presencia de magic-link-section)
+    if(document.getElementById('chat-root') && !document.getElementById('magic-link-section')) {
       if(window.initChatbot) window.initChatbot();
     }
   });

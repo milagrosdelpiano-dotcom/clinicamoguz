@@ -33,7 +33,7 @@
     .dropdown-menu.active{display:block}
     .dropdown-menu a{display:block;padding:12px 20px;color:var(--text);text-decoration:none;border-left:3px solid transparent}
     .dropdown-menu a:hover{background:var(--glass);border-left-color:var(--accent);color:var(--accent)}
-    main{padding-top:120px}
+    main{padding-top:72px!important}
     form .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     form small{color:var(--muted)}
     .btn{padding:12px 18px;border-radius:999px;border:0;font-weight:700}
@@ -47,13 +47,15 @@
     .chat-bubble:hover{transform:scale(1.1);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
     .chat-window{position:fixed;right:18px;bottom:94px;width:380px;background:linear-gradient(135deg,#e3f2fd,#bbdefb);border-radius:var(--radius-lg);padding:20px;box-shadow:0 12px 40px rgba(0,0,0,0.25);z-index:80;border:2px solid #90caf9}
     [data-theme="dark"] .chat-window {
-      background:linear-gradient(135deg,#1565c0,#0d47a1);
-      border-color:#1976d2;
+      background:linear-gradient(135deg,#263238,#37474f);
+      border-color:#546e7a;
     }
     .chat-window header{display:flex;align-items:center;justify-content:space-between}
     .quick-buttons{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
     .quick-buttons button{padding:8px 12px;border-radius:var(--radius-md);border:1px solid #64b5f6;background:white;color:#1976d2;font-size:13px;font-weight:600;flex:1;min-width:calc(50% - 4px)}
     .quick-buttons button:hover{background:#1976d2;color:white;transform:translateY(-1px)}
+    [data-theme="dark"] .quick-buttons button{background:#1e3a5f;color:#90caf9;border-color:#1976d2}
+    [data-theme="dark"] .quick-buttons button:hover{background:#1565c0;color:white}
     .chat-log{max-height:300px;overflow:auto;margin:12px 0;padding:12px;border-radius:var(--radius-md);background:white;border:1px solid #90caf9}
     [data-theme="dark"] .chat-log{background:#0d47a1;border-color:#1976d2}
     .msg{margin:8px 0;padding:10px 12px;border-radius:12px;display:flex;align-items:start;gap:10px;max-width:90%;clear:both}
@@ -257,9 +259,6 @@
   
   <div id="login-modal-root"></div>
   <div id="chat-root"></div>
-  <script>
-    if(window.initChatbot) window.initChatbot();
-  </script>
   
   <script src="assets/i18n.js"></script>
   <script src="assets/common.js"></script>

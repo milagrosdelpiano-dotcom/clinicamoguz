@@ -17,7 +17,7 @@
     }
     // Forzar origen válido si estamos en localhost
     window.AUTH_SITE_ORIGIN = window.location.origin.includes('localhost')
-      ? 'https://elaborate-sprinkles-563313.netlify.app'
+      ? 'https://milagrosdelpiano-dotcom.github.io/clinicamoguz'
       : window.location.origin;
     
     // Verificar si hay sesión activa

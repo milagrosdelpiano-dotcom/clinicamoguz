@@ -59,12 +59,12 @@
     });
   }
 
-  // Brand click: go to Inicio page for consistency
+  // Brand click: go to Dashboard (index.html)
   const brandLink = document.getElementById('brand-link');
   if (brandLink) {
     brandLink.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.href = 'inicio.html';
+      window.location.href = 'index.html';
     });
   }
 })();
