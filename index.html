@@ -2019,20 +2019,23 @@ async function fetchTurns() {
       menuToggle.addEventListener('click', (e) => {
         console.log("Menu toggle clicked");
         e.stopPropagation();
-        dropdownMenu.classList.toggle('active');
+        // Cambiar display directamente porque tiene style inline
+        const isVisible = dropdownMenu.style.display === 'block';
+        dropdownMenu.style.display = isVisible ? 'none' : 'block';
+        console.log("Menu toggled:", !isVisible);
       });
       
       // Cerrar menú al hacer clic fuera
       document.addEventListener('click', (e) => {
         if (!menuToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
-          dropdownMenu.classList.remove('active');
+          dropdownMenu.style.display = 'none';
         }
       });
       
       // Cerrar con ESC
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-          dropdownMenu.classList.remove('active');
+          dropdownMenu.style.display = 'none';
         }
       });
     } else {
