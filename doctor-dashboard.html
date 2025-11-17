@@ -653,8 +653,23 @@
     
     // Mostrar detalle del turno
     window.showAppointmentDetail = function(appointmentId) {
-      const apt = appointments.find(a => a.id === appointmentId);
-      if (!apt) return;
+      console.log('🔍 Buscando turno ID:', appointmentId, 'tipo:', typeof appointmentId);
+      console.log('📋 Appointments disponibles:', appointments);
+      
+      // Convertir a número si es string numérico
+      const numId = !isNaN(appointmentId) ? Number(appointmentId) : appointmentId;
+      
+      const apt = appointments.find(a => {
+        console.log('Comparando', a.id, 'con', numId, ':', a.id == numId);
+        return a.id == numId; // Usar == en lugar de === para comparación flexible
+      });
+      
+      console.log('✅ Turno encontrado:', apt);
+      
+      if (!apt) {
+        console.error('❌ No se encontró el turno con ID:', appointmentId);
+        return;
+      }
       
       const modalBody = document.getElementById('modal-body');
       modalBody.innerHTML = `
