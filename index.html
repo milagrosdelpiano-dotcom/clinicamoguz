@@ -1404,49 +1404,26 @@
         arr.unshift(data);
         saveTurns(arr);
 
-        // 🚀 Guardar también en la base de datos Supabase
+        // 🚀 Guardar también en la base de datos Supabase (tabla turns)
         try {
             await ensureSupabaseReady();
             
             // Obtener usuario autenticado
             const { data: { user } } = await window.supabaseClient.auth.getUser();
             
-            if (!user) {
-                console.warn('Usuario no autenticado. Turno guardado solo localmente.');
-                closeModal();
-                renderTurnsTable();
-                renderNextTurns();
-                customAlert(t('turnRequested'));
-                return;
-            }
-            
-            // Buscar el doctor_id basado en el nombre del profesional
-            let doctorId = null;
-            if (data.professional) {
-                const { data: doctors, error: doctorError } = await window.supabaseClient
-                    .from('doctors')
-                    .select('id')
-                    .ilike('name', data.professional)
-                    .limit(1);
-                
-                if (!doctorError && doctors && doctors.length > 0) {
-                    doctorId = doctors[0].id;
-                }
-            }
-            
-            // Preparar datos para Supabase (tabla appointments)
-            const appointmentData = {
-                user_id: user.id,
-                doctor_id: doctorId,
-                appointment_date: data.date,
-                appointment_time: data.time,
-                treatment_type: data.type,
+            // Preparar datos para Supabase (tabla turns - estructura simple)
+            const turnData = {
+                type: data.type,
                 specialty: data.specialty,
-                patient_name: data.patient,
-                status: 'pending'
+                professional: data.professional,
+                date: data.date,
+                time: data.time,
+                patient: data.patient,
+                status: data.status,
+                user_id: user ? user.id : null
             };
             
-            const { error } = await window.supabaseClient.from('appointments').insert([appointmentData]);
+            const { error } = await window.supabaseClient.from('turns').insert([turnData]);
             
             if (error) {
                 console.error('❌ Error guardando en Supabase:', error);
