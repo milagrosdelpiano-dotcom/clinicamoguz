@@ -602,7 +602,7 @@
           <td>${apt.time}</td>
           <td>
             <span class="type-badge">
-              ${apt.type === 'presencial' ? '🏥' : '💻'} 
+              ${apt.type && apt.type.toLowerCase() === 'presencial' ? '🏥' : '💻'} 
               ${apt.type}
             </span>
           </td>
@@ -613,9 +613,9 @@
             </span>
           </td>
           <td>
-            ${apt.type === 'virtual' && apt.video_link ? 
+            ${apt.type && apt.type.toLowerCase() === 'virtual' && apt.video_link ? 
               `<button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); window.open('${apt.video_link}', '_blank')">Iniciar</button>` :
-              apt.type === 'virtual' ?
+              apt.type && apt.type.toLowerCase() === 'virtual' ?
               `<button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); generateMeetLink('${apt.id}')">Generar link</button>` :
               ''
             }
