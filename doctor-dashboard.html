@@ -534,11 +534,15 @@
     async function loadAppointments() {
       if (!currentDoctor) return;
       
+      const doctorName = currentDoctor.full_name || currentDoctor.name;
+      console.log('🔍 Buscando turnos para:', doctorName);
+      console.log('📋 Doctor completo:', currentDoctor);
+      
       // Buscar turnos donde el nombre del profesional coincida con el doctor actual
       const { data, error } = await supabase
         .from('turns')
         .select('*')
-        .ilike('professional', `%${currentDoctor.name}%`)
+        .ilike('professional', `%${doctorName}%`)
         .order('date', { ascending: true })
         .order('time', { ascending: true });
       
@@ -547,6 +551,7 @@
         return;
       }
       
+      console.log('📊 Turnos encontrados:', data);
       appointments = data || [];
       console.log('Turnos cargados para', currentDoctor.name, ':', appointments);
       renderAppointments();
