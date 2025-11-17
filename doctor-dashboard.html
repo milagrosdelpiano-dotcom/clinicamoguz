@@ -538,8 +538,8 @@
         .from('appointments')
         .select('*')
         .eq('doctor_id', currentDoctor.id)
-        .order('date', { ascending: true })
-        .order('time', { ascending: true });
+        .order('appointment_date', { ascending: true })
+        .order('appointment_time', { ascending: true });
       
       if (error) {
         console.error('Error cargando turnos:', error);
@@ -558,9 +558,9 @@
       let filtered = appointments;
       
       if (currentView === 'presencial') {
-        filtered = appointments.filter(a => a.type === 'presencial');
+        filtered = appointments.filter(a => a.treatment_type === 'presencial');
       } else if (currentView === 'virtual') {
-        filtered = appointments.filter(a => a.type === 'virtual');
+        filtered = appointments.filter(a => a.treatment_type === 'virtual');
       }
       
       if (currentFilter !== 'all') {
@@ -582,12 +582,12 @@
       tbody.innerHTML = filtered.map(apt => `
         <tr onclick="showAppointmentDetail('${apt.id}')">
           <td><strong>${apt.patient_name}</strong></td>
-          <td>${new Date(apt.date).toLocaleDateString('es-AR')}</td>
-          <td>${apt.time}</td>
+          <td>${new Date(apt.appointment_date).toLocaleDateString('es-AR')}</td>
+          <td>${apt.appointment_time}</td>
           <td>
             <span class="type-badge">
-              ${apt.type === 'presencial' ? '🏥' : '💻'} 
-              ${apt.type}
+              ${apt.treatment_type === 'presencial' ? '🏥' : '💻'} 
+              ${apt.treatment_type}
             </span>
           </td>
           <td>${apt.specialty}</td>
@@ -597,9 +597,9 @@
             </span>
           </td>
           <td>
-            ${apt.type === 'virtual' && apt.video_link ? 
+            ${apt.treatment_type === 'virtual' && apt.video_link ? 
               `<button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); window.open('${apt.video_link}', '_blank')">Iniciar</button>` :
-              apt.type === 'virtual' ?
+              apt.treatment_type === 'virtual' ?
               `<button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); generateMeetLink('${apt.id}')">Generar link</button>` :
               ''
             }
@@ -614,10 +614,10 @@
       const currentMonth = new Date().getMonth();
       
       document.getElementById('stat-today').textContent = 
-        appointments.filter(a => a.date === today).length;
+        appointments.filter(a => a.appointment_date === today).length;
       
       document.getElementById('stat-pending').textContent = 
-        appointments.filter(a => a.status === 'pendiente').length;
+        appointments.filter(a => a.status === 'pending' || a.status === 'pendiente').length;
       
       document.getElementById('stat-confirmed').textContent = 
         appointments.filter(a => a.status === 'confirmado').length;
