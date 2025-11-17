@@ -543,6 +543,7 @@
       const lastName = nameParts[nameParts.length - 1]; // Último apellido
       
       console.log('🔎 Buscando por apellido:', lastName);
+      console.log('🔧 Query completa:', `SELECT * FROM turns WHERE professional ILIKE '%${lastName}%'`);
       
       // Buscar turnos donde el nombre del profesional contenga el apellido
       const { data, error } = await supabase
@@ -551,6 +552,8 @@
         .ilike('professional', `%${lastName}%`)
         .order('date', { ascending: true })
         .order('time', { ascending: true });
+      
+      console.log('📡 Response completo:', { data, error });
       
       if (error) {
         console.error('Error cargando turnos:', error);
