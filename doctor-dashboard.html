@@ -538,11 +538,17 @@
       console.log('🔍 Buscando turnos para:', doctorName);
       console.log('📋 Doctor completo:', currentDoctor);
       
-      // Buscar turnos donde el nombre del profesional coincida con el doctor actual
+      // Extraer apellido para búsqueda más flexible (ej: "Dr. Mario Morales Guzmán" -> "Morales" o "Guzmán")
+      const nameParts = doctorName.split(' ');
+      const lastName = nameParts[nameParts.length - 1]; // Último apellido
+      
+      console.log('🔎 Buscando por apellido:', lastName);
+      
+      // Buscar turnos donde el nombre del profesional contenga el apellido
       const { data, error } = await supabase
         .from('turns')
         .select('*')
-        .ilike('professional', `%${doctorName}%`)
+        .ilike('professional', `%${lastName}%`)
         .order('date', { ascending: true })
         .order('time', { ascending: true });
       

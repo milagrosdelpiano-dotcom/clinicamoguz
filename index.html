@@ -1427,7 +1427,10 @@
             
             if (error) {
                 console.error('❌ Error guardando en Supabase:', error);
-                customAlert('Turno guardado localmente. Error al sincronizar con servidor: ' + error.message);
+                console.error('❌ Error message:', error.message);
+                console.error('❌ Error details:', error.details);
+                console.error('❌ Error hint:', error.hint);
+                customAlert('Turno guardado localmente. Error al sincronizar con servidor: ' + (error.message || JSON.stringify(error)));
             } else {
                 console.log('✅ Turno guardado en Supabase correctamente.');
             }
