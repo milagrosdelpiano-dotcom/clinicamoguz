@@ -1697,32 +1697,11 @@
     renderChat(false);
 
     /* ---------- Theme / Language / Contact ---------- */
-    // Cargar tema guardado al inicio
+    // Cargar tema guardado al inicio (esto sí puede ejecutarse de inmediato)
     const savedTheme = localStorage.getItem('clinicTheme') || 'light';
     document.body.dataset.theme = savedTheme;
     
-    document.getElementById('toggle-theme').addEventListener('click', ()=>{
-      const newTheme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
-      document.body.dataset.theme = newTheme;
-      localStorage.setItem('clinicTheme', newTheme);
-    })
-    document.getElementById('lang-select').addEventListener('change', (e)=>{ 
-      setLanguage(e.target.value);
-    })
-    
-    // Inicializar idioma al cargar (después de que todo esté listo)
-    setTimeout(() => {
-      const langSelect = document.getElementById('lang-select');
-      if (langSelect) {
-        langSelect.value = currentLang;
-      }
-      updateTranslations();
-    }, 100);
-
-    document.getElementById('contact-form').addEventListener('submit',async (e)=>{ e.preventDefault(); await customAlert(t('querySent')); e.target.reset(); })
-
-    // Accessibility: brand click scroll to top
-    document.getElementById('brand-link').addEventListener('click',(e)=>{ e.preventDefault(); window.scrollTo({top:0,behavior:'smooth'}) })
+    // NOTA: Los event listeners de toggle-theme y menu-toggle se inicializan en initUIButtons() dentro de init()
 
     // render turns table if any exist on load
     renderTurnsTable();
@@ -1985,6 +1964,9 @@ async function fetchTurns() {
   async function init() {
     console.log("Iniciando carga de tratamientos y profesionales...");
     
+    // 0. Inicializar botones de UI (tema y menú)
+    initUIButtons();
+    
     // 1. Cargar tratamientos (prioriza DB, usa local si falla/vacío)
     let treatmentsData = [];
     treatmentsData = await fetchTreatments();
@@ -2013,12 +1995,84 @@ async function fetchTurns() {
     console.log("Carga inicial completada.");
   }
   
+  // Función para inicializar botones de UI
+  function initUIButtons() {
+    console.log("Inicializando botones de UI...");
+    
+    // Toggle de tema
+    const themeBtn = document.getElementById('toggle-theme');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        console.log("Toggle theme clicked");
+        const newTheme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.body.dataset.theme = newTheme;
+        localStorage.setItem('clinicTheme', newTheme);
+      });
+    } else {
+      console.error("Botón toggle-theme no encontrado");
+    }
+    
+    // Menú hamburguesa
+    const menuToggle = document.getElementById('menu-toggle');
+    const dropdownMenu = document.getElementById('dropdown-menu');
+    if (menuToggle && dropdownMenu) {
+      menuToggle.addEventListener('click', (e) => {
+        console.log("Menu toggle clicked");
+        e.stopPropagation();
+        dropdownMenu.classList.toggle('active');
+      });
+      
+      // Cerrar menú al hacer clic fuera
+      document.addEventListener('click', (e) => {
+        if (!menuToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+          dropdownMenu.classList.remove('active');
+        }
+      });
+      
+      // Cerrar con ESC
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          dropdownMenu.classList.remove('active');
+        }
+      });
+    } else {
+      console.error("Elementos del menú no encontrados");
+    }
+    
+    // Selector de idioma
+    const langSelect = document.getElementById('lang-select');
+    if (langSelect) {
+      langSelect.value = currentLang;
+      langSelect.addEventListener('change', (e) => {
+        setLanguage(e.target.value);
+      });
+    }
+    
+    // Formulario de contacto
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+      contactForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await customAlert(t('querySent'));
+        e.target.reset();
+      });
+    }
+    
+    // Brand link - scroll to top
+    const brandLink = document.getElementById('brand-link');
+    if (brandLink) {
+      brandLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.scrollTo({top: 0, behavior: 'smooth'});
+      });
+    }
+    
+    // Actualizar traducciones
+    updateTranslations();
+  }
+  
   // ⭐️ LLAMADA FINAL: Ejecutar init SOLO después de que el DOM esté listo ⭐️
   document.addEventListener('DOMContentLoaded', () => {
     init();
   });
 </script>
-
-<!-- ⭐️ Archivos JavaScript externos necesarios ⭐️ -->
-<script src="assets/common.js"></script>
-<script src="assets/i18n.js"></script>
