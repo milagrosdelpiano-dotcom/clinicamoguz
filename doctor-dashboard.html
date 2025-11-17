@@ -596,7 +596,7 @@
       }
       
       tbody.innerHTML = filtered.map(apt => `
-        <tr onclick="showAppointmentDetail('${apt.id}')">
+        <tr data-apt-id="${apt.id}" style="cursor:pointer;">
           <td><strong>${apt.patient}</strong></td>
           <td>${new Date(apt.date).toLocaleDateString('es-AR')}</td>
           <td>${apt.time}</td>
@@ -622,6 +622,15 @@
           </td>
         </tr>
       `).join('');
+      
+      // Agregar event listeners a las filas
+      tbody.querySelectorAll('tr[data-apt-id]').forEach(row => {
+        row.addEventListener('click', () => {
+          const aptId = row.getAttribute('data-apt-id');
+          console.log('🖱️ Click en turno ID:', aptId);
+          showAppointmentDetail(aptId);
+        });
+      });
     }
     
     // Actualizar estadísticas
