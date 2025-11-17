@@ -1251,8 +1251,8 @@
       dataToRender.forEach(treatment=>{
         console.log("Renderizando tratamiento:", treatment); // DEBUG
         const el = document.createElement('div'); el.className='card treatment-card';
-        const treatmentName = treatment.name || t(treatment${treatment.id}Name);
-        const treatmentSpec = treatment.specialty || t(treatment${treatment.id}Spec);
+        const treatmentName = treatment.name || t(`treatment${treatment.id}Name`);
+        const treatmentSpec = treatment.specialty || t(`treatment${treatment.id}Spec`);
         const treatmentImg = treatment.image_url || treatment.img;
         // ⭐️ IMAGEN SIN EL ONERROR para evitar problemas de recursión ⭐️
         el.innerHTML = `<img src="${treatmentImg}" alt="${treatmentName}" /><h3>${treatmentName}</h3><div style="color:var(--muted)">${treatmentSpec}</div><div style="margin-top:12px;display:flex;gap:8px;justify-content:center"><button class='btn btn-ghost' onclick='viewTreatment(${treatment.id})'>${t('viewMore')}</button><button class='btn btn-primary' onclick='requestTurnForTreat(${treatment.id})'>${t('requestTurnFor')}</button></div>`;
