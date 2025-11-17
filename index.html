@@ -1486,9 +1486,40 @@
     }
 
     /* ---------- Mis turnos / Tabla ---------- */
-    function renderTurnsTable(){
+    async function syncTurnsFromSupabase() {
+      try {
+        await ensureSupabaseReady();
+        const localTurns = loadTurns();
+        
+        // Para cada turno local, intentar obtener el video_link actualizado de Supabase
+        for (let turn of localTurns) {
+          const { data, error } = await window.supabaseClient
+            .from('turns')
+            .select('video_link')
+            .eq('date', turn.date)
+            .eq('time', turn.time)
+            .eq('patient', turn.patient)
+            .single();
+          
+          if (data && data.video_link) {
+            turn.video_link = data.video_link;
+          }
+        }
+        
+        saveTurns(localTurns);
+        return localTurns;
+      } catch (err) {
+        console.error('Error sincronizando turnos:', err);
+        return loadTurns();
+      }
+    }
+    
+    async function renderTurnsTable(){
       const area = document.getElementById('turns-table-area');
-      const arr = loadTurns();
+      
+      // Sincronizar con Supabase primero para obtener video_links actualizados
+      const arr = await syncTurnsFromSupabase();
+      
       if(arr.length===0){ area.innerHTML = `<div style="color:var(--muted);padding:10px;border:1px dashed var(--muted);border-radius:var(--radius-md)">${t('noTurns')}</div>`; return }
       const dateLabel = currentLang === 'es' ? 'Fecha' : 'Date';
       const timeLabel = currentLang === 'es' ? 'Hora' : 'Time';
@@ -1499,6 +1530,7 @@
       let html = `<table><thead><tr><th>${dateLabel}</th><th>${timeLabel}</th><th>${doctorLabel}</th><th>${typeLabel}</th><th>${statusLabel}</th><th>${actionsLabel}</th></tr></thead><tbody>`;
       arr.forEach(turn=>{
         const isCanceled = turn.status === 'cancelado';
+        const isVirtual = turn.type && turn.type.toLowerCase() === 'virtual';
         let actionButtons = '';
         if (isCanceled) {
           // Si está cancelado, solo mostrar Ver y Eliminar
@@ -1506,6 +1538,12 @@
         } else {
           // Si no está cancelado, mostrar Reprogramar, Cancelar y Ver
           actionButtons = `<button class='btn btn-ghost' style='padding:6px' onclick="reprogram(${turn.id})">${t('reprogram')}</button> <button class='btn btn-ghost' style='padding:6px' onclick="cancelTurn(${turn.id})">${t('cancelTurn')}</button> <button class='btn btn-ghost' style='padding:6px' onclick="viewDetails(${turn.id})">${t('view')}</button>`;
+          
+          // Si es turno virtual y tiene video_link, agregar botón para unirse
+          if (isVirtual && turn.video_link) {
+            const joinLabel = currentLang === 'es' ? '🎥 Unirse' : '🎥 Join';
+            actionButtons += ` <button class='btn btn-primary' style='padding:6px' onclick="window.open('${turn.video_link}', '_blank')">${joinLabel}</button>`;
+          }
         }
         html += `<tr><td>${turn.date}</td><td>${turn.time}</td><td>${turn.professional||'-'}</td><td>${turn.type}</td><td>${statusPill(turn.status)}</td><td>${actionButtons}</td></tr>`;
       })

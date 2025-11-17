@@ -765,9 +765,9 @@
     
     // Generar link de Google Meet
     window.generateMeetLink = async function(appointmentId) {
-      // Generar un ID único para el meet
-      const meetId = Math.random().toString(36).substring(2, 12);
-      const meetLink = `https://meet.google.com/${meetId}`;
+      // Generar un ID único para Jitsi Meet
+      const roomId = Math.random().toString(36).substring(2, 12);
+      const meetLink = `https://meet.jit.si/ClinicaMoguz-${roomId}`;
       
       const { error } = await supabase
         .from('turns')
@@ -779,7 +779,7 @@
         return;
       }
       
-      alert('✅ Enlace generado: ' + meetLink);
+      alert('✅ Enlace generado: ' + meetLink + '\n\n¡Copiá este link para compartirlo con el paciente!');
       loadAppointments();
       
       // Si está en el modal, actualizar
